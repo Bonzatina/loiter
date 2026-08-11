@@ -1,0 +1,102 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: system-ui, sans-serif; background: #fafaf8; color: #222; }
+
+header {
+  background: #2e7d32;
+  color: #fff;
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.header-left { display: flex; align-items: baseline; gap: 16px; }
+header h1 { font-size: 1.25rem; font-weight: 600; }
+header h1 a { color: inherit; text-decoration: none; }
+header span { font-size: 0.85rem; opacity: 0.75; }
+
+.header-nav { display: flex; align-items: center; gap: 12px; }
+.header-nav a {
+  color: rgba(255,255,255,0.85);
+  text-decoration: none;
+  font-size: 0.85rem;
+}
+.header-nav a:hover { color: #fff; text-decoration: underline; }
+.header-nav a.active { color: #fff; font-weight: 600; }
+.lang-switcher { display: flex; align-items: center; gap: 2px; }
+.lang-btn {
+  font-size: 0.72rem; font-weight: 600; letter-spacing: .06em;
+  padding: 2px 7px; border-radius: 3px;
+  border: 1px solid rgba(255,255,255,0.4);
+  text-decoration: none; line-height: 1.6;
+}
+.lang-active { color: #fff; background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.5); cursor: default; }
+.lang-link   { color: rgba(255,255,255,0.75); background: transparent; }
+.lang-link:hover { color: #fff; background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.7); }
+.lang-off    { color: rgba(255,255,255,0.3); border-color: rgba(255,255,255,0.15); cursor: default; }
+
+/* ── City switcher ─────────────────────────────────────────────────────────
+   A <details> dropdown so it needs no JavaScript. Chrome the standalone city
+   sites do not have; everything above this line is shared with them verbatim. */
+.city-switcher { position: relative; }
+.city-switcher > summary {
+  list-style: none;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #fff;
+  padding: 3px 10px 3px 9px;
+  border: 1px solid rgba(255,255,255,0.35);
+  border-radius: 3px;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+.city-switcher > summary::-webkit-details-marker { display: none; }
+.city-switcher > summary::after {
+  content: '▾';
+  font-size: 0.7rem;
+  margin-left: 7px;
+  opacity: 0.8;
+}
+.city-switcher > summary:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.6); }
+.city-switcher[open] > summary { background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.6); }
+.city-switcher[open] > summary::after { content: '▴'; }
+
+.city-switcher ul {
+  position: absolute;
+  z-index: 1000;          /* above the Leaflet map, which sits at 400 */
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 180px;
+  list-style: none;
+  background: #fff;
+  border: 1px solid #d8d8d3;
+  border-radius: 4px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  padding: 4px 0;
+}
+.city-switcher li a {
+  display: block;
+  padding: 7px 14px;
+  font-size: 0.9rem;
+  color: #333;
+  text-decoration: none;
+}
+.city-switcher li a:hover { background: #eef5ee; color: #2e7d32; }
+/* The city you are already in. Still a link — from an about page it is the
+   header's only way back to that city's map. */
+.city-switcher li.city-current a { font-weight: 600; color: #2e7d32; }
+.city-switcher li.city-current a::before {
+  content: '·';
+  margin-right: 6px;
+  margin-left: -8px;
+}
+
+footer {
+  text-align: center;
+  padding: 24px;
+  font-size: 0.75rem;
+  color: #999;
+  border-top: 1px solid #e8e8e5;
+  margin-top: 40px;
+}

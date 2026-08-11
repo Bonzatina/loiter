@@ -1,0 +1,40 @@
+; Each city wiki stays its own repository; this one records only a pointer to a
+; commit in each. The city repos are untouched by being referenced here, and their
+; standalone deployments keep working.
+;
+;   branch  = main    → `git submodule update --remote` follows that branch
+;   shallow = true    → `--depth 1`: the working files without ~400 MB of image
+;                        history, which is the real weight of these repos
+;
+; Content is published to the combined site by bumping the pointers:
+;   git submodule update --remote && git commit -am "Bump city content"
+;
+; Note the URLs use the `github-personal` SSH alias from ~/.ssh/config (the
+; personal Bonzatina key, not the default one). A build host will not have that
+; alias — see the deployment notes in CLAUDE.md.
+
+[submodule "wiki_berlin"]
+	path = wiki_berlin
+	url = git@github-personal:Bonzatina/Loiter-berlin.git
+	branch = main
+	shallow = true
+[submodule "wiki_bratislava"]
+	path = wiki_bratislava
+	url = git@github-personal:Bonzatina/Loiter-bratislava.git
+	branch = main
+	shallow = true
+[submodule "wiki_budapest"]
+	path = wiki_budapest
+	url = git@github-personal:Bonzatina/Loiter-budapest.git
+	branch = main
+	shallow = true
+[submodule "wiki_dresden"]
+	path = wiki_dresden
+	url = git@github-personal:Bonzatina/Loiter-dresden.git
+	branch = main
+	shallow = true
+[submodule "wiki_wroclav"]
+	path = wiki_wroclav
+	url = git@github-personal:Bonzatina/Loiter-wroclav.git
+	branch = main
+	shallow = true

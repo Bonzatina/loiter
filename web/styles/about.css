@@ -1,0 +1,92 @@
+.page-body { max-width: 720px; margin: 0 auto; padding: 40px 20px; }
+h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 24px; color: #222; }
+h2 { font-size: 1rem; font-weight: 600; margin: 32px 0 10px; color: #444;
+     text-transform: uppercase; letter-spacing: .05em; }
+p { line-height: 1.75; margin-bottom: 14px; color: #333; }
+.note {
+  background: #fff8e1;
+  border-left: 3px solid #f9a825;
+  padding: 12px 16px;
+  border-radius: 0 4px 4px 0;
+  margin: 20px 0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #555;
+}
+.support-section {
+  background: #e8f5e9;
+  border-left: 3px solid #4caf50;
+  padding: 16px 16px;
+  border-radius: 0 4px 4px 0;
+  margin: 20px 0;
+}
+.support-section p {
+  margin-bottom: 12px;
+  color: #2e7d32;
+  font-weight: 500;
+}
+.donate-button {
+  display: inline-block;
+  background: #4caf50;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: background 0.2s;
+}
+.donate-button:hover {
+  background: #45a049;
+}
+.images-note {
+  font-size: 0.85rem;
+  color: #777;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+.images-note a { color: #1565c0; }
+.sources-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+.sources-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+.src-domain {
+  font-family: monospace;
+  font-size: 0.88rem;
+  color: #1565c0;
+  min-width: 240px;
+  flex-shrink: 0;
+}
+.src-desc {
+  font-size: 0.88rem;
+  color: #555;
+  line-height: 1.5;
+}
+
+/* City list on the project-level about page, where a source list would be. */
+.about-cities {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+  margin: 12px 0 24px;
+}
+.about-cities a {
+  display: inline-block;
+  padding: 5px 12px;
+  border: 1px solid #dcdcd6;
+  border-radius: 14px;
+  background: #fff;
+  font-size: 0.9rem;
+  color: #2e7d32;
+  text-decoration: none;
+}
+.about-cities a:hover { border-color: #2e7d32; background: #eef5ee; }

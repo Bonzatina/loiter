@@ -1,0 +1,59 @@
+import type { City } from './cities'
+import type { Lang } from './lang'
+import { toClientPages, type WikiPage } from './wiki'
+import { MARKER_COLOR, DOMAIN_COLOR, ROUTES, UI_STRINGS, legendFor } from './constants'
+import { renderHeader, renderHtmlDocument } from './shared'
+
+export function renderPage(city: City, pages: WikiPage[], lang: Lang = 'ru'): string {
+  const ui = UI_STRINGS[lang]
+  // Only the domains this city has objects for — see legendFor in constants.ts.
+  const legend = legendFor(city)
+
+  return renderHtmlDocument({
+    lang,
+    title: city.brand,
+    styles: [
+      'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
+      '/styles/shared.css',
+      '/styles/map.css',
+    ],
+    body: `
+${renderHeader(city, undefined, { current: lang })}
+
+<div class="legend">
+  ${Object.entries(legend).map(([type, color]) =>
+    `<button class="legend-btn" data-type="${type}"><span class="dot" style="background:${color}"></span>${ui.legend[type] ?? type}</button>`
+  ).join('')}
+</div>
+
+<div id="map"></div>
+
+<div class="search-wrap">
+  <input type="search" id="search-input" placeholder="${ui.searchPlaceholder}" autocomplete="off">
+  <button id="search-clear" aria-label="Clear" style="display:none">✕</button>
+</div>
+
+<div class="content" id="list-content"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  window.DATA = {
+    pages: ${JSON.stringify(toClientPages(pages))},
+    routes: ${JSON.stringify(ROUTES)},
+    colors: ${JSON.stringify(MARKER_COLOR)},
+    domainColors: ${JSON.stringify(DOMAIN_COLOR)},
+    legendTypes: ${JSON.stringify(Object.keys(legend))},
+    legendColors: ${JSON.stringify(legend)},
+    lang: ${JSON.stringify(lang)},
+    ui: ${JSON.stringify(ui)},
+    city: ${JSON.stringify({
+      slug: city.slug,
+      center: city.center,
+      zoom: city.zoom,
+      stateKey: city.stateKey,
+    })}
+  }
+</script>
+<script src="/scripts/map.js"></script>`,
+  })
+}

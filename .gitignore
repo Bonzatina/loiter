@@ -1,0 +1,23 @@
+# Secrets: notes mail config (Resend key, moderator address)
+.env
+.env.*
+web/.env
+web/.env.*
+
+# Personal editor / assistant settings — never commit
+.claude/
+.obsidian/
+.vscode/
+
+# Dependencies
+web/node_modules/
+
+# The rural-travel wiki is NOT part of the combined site: different taxonomy
+# (regions/settlements/railways/ferries), different domains and legend. It is its
+# own repository and is deliberately not a submodule here — ignored so git does
+# not report it as an untracked embedded repo.
+/wiki_rural_travel/
+
+# OS noise
+.DS_Store
+Thumbs.db

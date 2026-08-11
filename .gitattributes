@@ -1,0 +1,12 @@
+# Normalize all text files to LF in the repository
+* text=auto eol=lf
+
+# Markdown — always LF
+*.md text eol=lf
+
+# Explicitly binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.pdf binary

@@ -1,0 +1,67 @@
+.page-body { max-width: 760px; margin: 0 auto; padding: 32px 20px; }
+.page-nav { display: flex; align-items: center; gap: 16px; margin-bottom: 4px; }
+a.back { color: #2e7d32; text-decoration: none; font-size: 0.85rem; }
+a.back:hover { text-decoration: underline; }
+a.show-on-map {
+  font-size: 0.82rem; color: #1565c0; text-decoration: none;
+  border: 1px solid #c5d8f0; border-radius: 4px; padding: 3px 10px;
+  background: #f0f6ff;
+}
+a.show-on-map:hover { background: #dceeff; }
+h1 { font-size: 1.5rem; font-weight: 700; margin: 10px 0 12px; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 28px; }
+.badge { background: #e8f5e9; border: 1px solid #c8e6c9; border-radius: 4px;
+         padding: 2px 8px; font-size: 0.75rem; color: #1b5e20; }
+.body h2 { font-size: 1.1rem; font-weight: 600; margin: 24px 0 8px; }
+.body h3 { font-size: 0.95rem; font-weight: 600; margin: 18px 0 6px; color: #555; }
+.body p  { line-height: 1.7; margin-bottom: 14px; }
+.body ul, .body ol { padding-left: 22px; margin-bottom: 14px; }
+.body li { line-height: 1.7; }
+.body a  { color: #1565c0; }
+.body table { border-collapse: collapse; width: 100%; margin-bottom: 14px; }
+.body th, .body td { border: 1px solid #ddd; padding: 6px 10px; text-align: left; }
+.body th { background: #f5f5f5; }
+.body hr { border: none; border-top: 1px solid #e0e0e0; margin: 20px 0; }
+/* Cap image display size (applies to every page): fit within both bounds,
+   keep aspect ratio. Portraits are limited by height, landscapes by width. */
+.body img { max-width: min(100%, 440px); max-height: 460px; width: auto; height: auto;
+            display: block; border-radius: 4px; margin-bottom: 16px; }
+.body img[alt^="Герб"],
+.body img[alt^="Coat of Arms"] { max-width: min(100%, 220px); max-height: none; }
+
+/* ── Visitor notes ───────────────────────────────────────────────────────── */
+.note-banner { border-radius: 4px; padding: 10px 12px; font-size: 0.88rem; margin: 24px 0 0; }
+.note-ok  { background: #e8f5e9; border: 1px solid #c8e6c9; color: #1b5e20; }
+.note-err { background: #fdecea; border: 1px solid #f5c6c2; color: #8b2e26; }
+.note-err a { color: #8b2e26; }
+.note-box { margin: 28px 0 8px; border-top: 1px solid #e0e0e0; padding-top: 16px; }
+.note-box > summary {
+  cursor: pointer; display: inline-block; font-size: 0.85rem; color: #2e7d32;
+  border: 1px solid #c8e6c9; border-radius: 4px; padding: 5px 12px; background: #f3faf3;
+  list-style: none;
+}
+.note-box > summary::-webkit-details-marker { display: none; }
+.note-box > summary:hover { background: #e8f5e9; }
+.note-form { margin-top: 14px; }
+.nf-intro { font-size: 0.85rem; color: #555; line-height: 1.6; margin-bottom: 12px; }
+.nf-label { display: block; font-size: 0.8rem; color: #444; margin-bottom: 4px; }
+.note-form textarea {
+  width: 100%; box-sizing: border-box; font: inherit; font-size: 0.9rem; line-height: 1.6;
+  padding: 8px 10px; border: 1px solid #cfd8dc; border-radius: 4px; resize: vertical;
+}
+.nf-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
+.nf-field { display: flex; flex-direction: column; font-size: 0.8rem; color: #444; flex: 1 1 160px; }
+.nf-field input {
+  margin-top: 4px; font: inherit; font-size: 0.88rem; padding: 6px 8px;
+  border: 1px solid #cfd8dc; border-radius: 4px;
+}
+.nf-opt { color: #90a4ae; font-size: 0.72rem; }
+.note-form textarea:focus, .nf-field input:focus { outline: 2px solid #a5d6a7; outline-offset: 0; border-color: #a5d6a7; }
+.nf-submit {
+  margin-top: 14px; font: inherit; font-size: 0.85rem; cursor: pointer;
+  background: #2e7d32; color: #fff; border: none; border-radius: 4px; padding: 8px 16px;
+}
+.nf-submit:hover { background: #256428; }
+.nf-privacy { font-size: 0.75rem; color: #78909c; line-height: 1.5; margin-top: 10px; }
+/* Honeypot: off-screen for people, irresistible for bots. */
+.nf-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
