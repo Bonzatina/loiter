@@ -98,6 +98,15 @@ export const UI_STRINGS = {
     chooseCity:          'Выберите город',
     // Три формы для согласования с числительным — см. src/plural.ts.
     pages:               { one: 'страница', few: 'страницы', many: 'страниц' },
+    geo: {
+      findMe:  '⊕ Найти меня',
+      hint:    'Определим, в каком из городов вы находитесь, и откроем карту вокруг вас.',
+      denied:  'Доступ к геолокации запрещён. Разрешите его в настройках браузера и попробуйте снова.',
+      failed:  'Не удалось определить местоположение. Попробуйте ещё раз.',
+      // {city} и {km} подставляются скриптом.
+      far:     'Вы далеко от наших городов. Ближайший — {city}, около {km} км.',
+      found:   'Вы рядом с {city} — открываем карту…',
+    },
     notes: {
       button:      'Оставить заметку',
       intro:       'Были здесь? Напишите, что увидели, — заметка уйдёт модератору, и, если она добавляет к странице что-то стоящее, попадёт в текст.',
@@ -161,6 +170,14 @@ export const UI_STRINGS = {
     allCities:           'All cities',
     chooseCity:          'Choose a city',
     pages:               { one: 'page', few: 'pages', many: 'pages' },
+    geo: {
+      findMe:  '⊕ Find me',
+      hint:    'We will work out which of the cities you are in and open the map around you.',
+      denied:  'Location access was denied. Allow it in your browser settings and try again.',
+      failed:  'Could not determine your location. Please try again.',
+      far:     'You are far from our cities. The nearest is {city}, about {km} km away.',
+      found:   'You are near {city} — opening the map…',
+    },
     notes: {
       button:      'Leave a note',
       intro:       'Been here? Write what you saw — the note goes to the moderator, and if it adds something worth having, it makes it into the page.',

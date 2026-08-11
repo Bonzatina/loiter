@@ -150,6 +150,30 @@ engine, not one site about five cities. Serving ~950 objects to the client at on
 deciding what an intermediate zoom level should show, are problems this deliberately
 does not take on. `/` is the only page that knows about more than one city.
 
+## Finding the Reader
+
+The site is for someone standing in a street now, so the picker offers to skip the
+choosing: «⊕ Найти меня» geolocates, works out which city that is, and opens its map
+centred on the reader with their position marked. It reuses the map's own
+`setUserPosition`, so there is one implementation of the user marker.
+
+Three properties of this that are deliberate and should survive any rewrite:
+
+- **The position never travels in a URL.** `scripts/cities.js` writes it to
+  `sessionStorage` under `loiter_locate`; `scripts/map.js` reads it once and deletes it
+  (ignoring anything older than two minutes or belonging to another city). A query string
+  would leak a precise location into server logs, the `Referer` header and the analytics
+  hit — a bad trade for saving one click.
+- **`NEAR_KM = 30` in `scripts/cities.js`.** Beyond it the nearest city is offered as a
+  plain link instead of a redirect. The threshold has to clear the widest city (Berlin's
+  outer Bezirke sit ~23 km out) while keeping Vienna (55 km) out of Bratislava and Prague
+  (119 km) out of Dresden — otherwise the site drops a reader into an empty patch of map
+  and calls it their surroundings. The wording is «вы **рядом** с X», not «в X», because
+  Potsdam at 27 km passes the test.
+- **The button ships with `hidden`** and the script reveals it only when
+  `navigator.geolocation` exists, so a browser that cannot use it never sees a dead
+  control — the same rule as the visitor-note form.
+
 ## Content Sourcing
 
 Two paths, same filesystem layout, so the code never branches:
@@ -217,6 +241,9 @@ These are the properties that keep the site one system rather than five:
   `wiki/` that is not `districts` / `concepts` / `people` / `sources` is a district,
   read through its `quarters/` and `places/` subfolders. Adding a district needs no code
   change in any city.
+- **No reader coordinates in URLs.** Neither a query string nor a path segment ever
+  carries a geolocated position — see «Finding the Reader». Page `coords` from the wiki
+  are public data and unaffected by this.
 - **Notes stay one implementation.** `POST /note` validates and mails through Resend and
   stores nothing; the city comes from the form body and only picks the subject prefix,
   timezone and district label out of the registry. Anti-spam behaviour (honeypot,

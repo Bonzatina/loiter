@@ -33,6 +33,15 @@ export function renderCitiesPage(cards: CityCard[], lang: Lang = 'ru'): string {
     ? 'Interactive encyclopaedias for exploring cities on foot: architecture, history, museums, parks, culture, and specific places worth seeing with your own eyes.'
     : 'Интерактивные энциклопедии для исследования городов пешком: архитектура, история, музеи, парки, культура и конкретные места, которые стоит увидеть своими глазами.'
 
+  // Only what the client needs to pick a city: name, where its centre is and
+  // where to go. No page data — the picker never loads a city's content.
+  const geoCities = cards.map(({ city }) => ({
+    slug: city.slug,
+    name: city.name[lang],
+    center: city.center,
+    url: homeUrl(city.slug, lang),
+  }))
+
   return renderHtmlDocument({
     lang,
     title: 'Loiter',
@@ -41,9 +50,24 @@ export function renderCitiesPage(cards: CityCard[], lang: Lang = 'ru'): string {
 <div class="cities-body">
   <h1>${ui.chooseCity}</h1>
   <p class="cities-intro">${intro}</p>
+
+  <div class="find-me-box">
+    <button id="find-me" class="find-me-btn" type="button" hidden>${ui.geo.findMe}</button>
+    <p class="find-me-hint">${ui.geo.hint}</p>
+    <p id="find-me-status" class="find-me-status" hidden></p>
+  </div>
+
   <div class="city-grid">${items}
   </div>
-</div>`,
+</div>
+
+<script>
+  window.DATA = {
+    cities: ${JSON.stringify(geoCities)},
+    ui: ${JSON.stringify({ locating: ui.locating, geo: ui.geo })}
+  }
+</script>
+<script src="/scripts/cities.js"></script>`,
   })
 }
 

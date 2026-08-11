@@ -631,10 +631,42 @@ document.addEventListener('keydown', e => {
   }
 })
 
+// ── Arriving from the picker's "find me" button ────────────────────────────
+// The picker geolocated, worked out which city this is and left the position in
+// sessionStorage — deliberately not in the URL, so precise coordinates stay out
+// of server logs, the Referer header and the analytics hit. Read once, then
+// dropped: a reload should not silently re-centre on a stale position.
+
+const HANDOFF_KEY = 'loiter_locate'
+const HANDOFF_MAX_AGE_MS = 2 * 60 * 1000
+
+function consumeLocateHandoff() {
+  let h
+  try { h = JSON.parse(sessionStorage.getItem(HANDOFF_KEY) || '') } catch { return null }
+  sessionStorage.removeItem(HANDOFF_KEY)
+  if (!h || h.city !== city.slug) return null
+  if (!Number.isFinite(h.lat) || !Number.isFinite(h.lng)) return null
+  if (!Number.isFinite(h.ts) || Date.now() - h.ts > HANDOFF_MAX_AGE_MS) return null
+  return h
+}
+
+const handoff = consumeLocateHandoff()
+
 // ── Highlight marker from "Показать на карте" ─────────────────────────────
 
 const highlightSlug = new URLSearchParams(location.search).get('highlight')
-if (highlightSlug) {
+
+if (handoff) {
+  // Beats both the restored viewport and the city's default centre: the reader
+  // asked to be shown where they are.
+  map.setView([handoff.lat, handoff.lng], Math.max(city.zoom, 14), { animate: false })
+  locateState = 'located'   // pre-set so setUserPosition skips its flyTo
+  setUserPosition(handoff.lat, handoff.lng, handoff.accuracy)
+  // A box selection restored from an earlier visit would hide exactly what is
+  // around the reader, which is the one thing they asked to see.
+  if (selectionActive) clearSelection()
+  update()
+} else if (highlightSlug) {
   history.replaceState(null, '', mapBase)
   const found = markerObjects.find(m => m.page.slug === highlightSlug)
   if (found) {
