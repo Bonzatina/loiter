@@ -280,15 +280,22 @@ run side by side.
   needs a change, do it in that subproject, in its own commit, under its own `CLAUDE.md`.
 - **Log** aggregator work in `log.md` at this root: `## [YYYY-MM-DD] {kind} | summary`,
   same convention as the subprojects (`init`, `feat`, `fix`, `lint`, `convention`).
-- **Git identity is personal, and it is set per repository.** Every repo in this family
-  carries `user.name = bonzatina` and `user.email = martymckul@gmail.com` in its *local*
-  config, because the machine's global config is the corporate one
-  (`sergei.kulikov@devexpress.com`). A repo without the local override silently commits
-  under the work address — that is exactly how it got into `wiki_dresden` and
-  `wiki_wroclav`, whose histories had to be rewritten to remove it. Set the two values
-  before the first commit in any new repo here, and remember that the remote must be
-  reached through the `github-personal` SSH alias: plain `git@github.com` picks the
-  default key, which is the work account.
+- **Git identity is personal, and it is automatic.** Commits here are
+  `bonzatina <martymckul@gmail.com>`. The machine's *global* identity is the corporate
+  one (`sergei.kulikov@devexpress.com`), and a repo that inherits it commits under the
+  work address without saying so — that is exactly how it got into `wiki_dresden` and
+  `wiki_wroclav`, whose histories had to be rewritten to remove it.
+
+  Two things prevent a recurrence. Every existing repo here carries the identity in its
+  local config; and `~/.gitconfig` has a conditional include —
+  `[includeIf "gitdir/i:C:/Users/sergei.kulikov/projects/Loiter/"] path = ~/.gitconfig-loiter`
+  — so **any** repository under this directory picks the personal identity up on its own,
+  including a fresh clone or a new subproject. The local configs are belt and braces: they
+  are not committed and so do not survive a clone, which is what the include covers.
+  Repositories outside this path are untouched and stay corporate.
+
+  The remote must still be reached through the `github-personal` SSH alias: plain
+  `git@github.com` picks the default key, which is the work account.
 - This file and log-entry prefixes stay in English as operational instructions; any
   user-facing text follows the subprojects' rule — Russian is the base language, English
   is the `.en` mirror.
