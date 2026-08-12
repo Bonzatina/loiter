@@ -1,4 +1,4 @@
-# Loiter — Schema of the Combined Site
+1# Loiter — Schema of the Combined Site
 
 The **Loiter** family root. This directory holds one aggregator web app plus the city
 wiki subprojects it draws content from. The aggregator serves every city from a
@@ -296,16 +296,23 @@ values go into the dashboard by hand:
 | Instance Type | Free |
 | Health Check Path | `/` |
 
-Build Command — one line, because the dashboard field is a single shell command. It steps
-out to the repository root for the submodules (Render does not initialise them) and back
-for the install:
+Build Command — one line, because the dashboard field is a single shell command. It
+installs first, then steps out to the repository root for the submodules, which Render
+does not initialise on its own:
 
 ```
-cd .. && if [ -n "$GIT_SUBMODULE_TOKEN" ]; then git config --global url."https://x-access-token:$GIT_SUBMODULE_TOKEN@github.com/".insteadOf "https://github.com/"; fi && git submodule update --init --depth 1 && cd web && npm ci --no-audit --no-fund
+if [ -n "$GIT_SUBMODULE_TOKEN" ]; then git config --global url."https://x-access-token:$GIT_SUBMODULE_TOKEN@github.com/".insteadOf "https://github.com/"; fi && npm ci --omit=dev --no-audit --no-fund && cd .. && git submodule update --init --depth 1 && echo "--- disk ---" && df -h . && echo "--- content ---" && du -sh wiki_* | sort -h
 ```
 
-Environment: `NOTES_API_KEY`, `NOTES_TO`, `NOTES_SECRET`, `SITE_URL`, and
-`GIT_SUBMODULE_TOKEN` only if the build fails without it — see the note in `render.yaml`.
+Why in that order, and why `--omit=dev`, is explained in `render.yaml` — briefly: npm ci
+crashed with "Exit handler never called" when it ran after ~430 MB of city content was on
+disk, and the runtime needs none of the devDependencies (`tsx` transpiles through its own
+esbuild; nothing under `src/` imports `typescript` or `@types`).
+
+Environment: `NOTES_API_KEY`, `NOTES_TO`, `NOTES_SECRET`, `SITE_URL`.
+`GIT_SUBMODULE_TOKEN` turned out **not** to be needed — Render reaches the private city
+repos through its own GitHub app; the conditional rewrite stays in place in case that ever
+changes.
 - **Dev-server note (Windows):** a leftover process holding the port keeps serving a
   stale wiki cache and will mislead smoke tests. Clear it with
   `Get-NetTCPConnection -LocalPort 4848 -State Listen | % { Stop-Process -Id $_.OwningProcess -Force }`.

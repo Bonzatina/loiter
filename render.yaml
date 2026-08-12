@@ -30,23 +30,38 @@ services:
     rootDir: web
     healthCheckPath: /
 
-    # --no-audit --no-fund sidesteps npm's "Exit handler never called" crash seen
-    # on Render's builders (network side-calls at the end of install).
+    # Order matters. `npm ci` runs FIRST, while the disk still holds only the
+    # aggregator, because installing after the submodules were checked out failed
+    # with npm's "Exit handler never called" — its internal crash, and the one the
+    # subprojects' own blueprint blames on network side-calls at the end of
+    # install. --no-audit --no-fund is supposed to sidestep it and is already here,
+    # so something else tips it over; the difference from a city service is that
+    # this build has all five cities on disk (~430 MB) instead of one (77-192 MB).
+    #
+    # --omit=dev: the runtime needs none of it. `npm start` is `tsx src/server.ts`,
+    # tsx transpiles through its own esbuild, and nothing under src/ imports
+    # typescript or @types. That is the whole devDependencies block.
     #
     # --depth 1 is the `shallow = true` from .gitmodules: the city working files
     # without their image history, which is where the weight of these repos is.
-    # Note the classic shallow-submodule trap — a recorded pointer that has fallen
-    # behind its branch tip. GitHub permits fetching a commit by SHA, so this
-    # normally resolves anyway; if a deploy ever fails there, raise the depth.
+    # Note the shallow-submodule trap — a recorded pointer that has fallen behind
+    # its branch tip. GitHub permits fetching a commit by SHA, so it normally
+    # resolves; raise the depth if a deploy ever fails there. A pointer on a commit
+    # that was never PUSHED is a different failure and reads
+    # `upload-pack: not our ref` — that one is fixed in the city repo, not here.
+    #
+    # The df/du tail is deliberate: if the build is really running out of room, the
+    # log should say so instead of leaving us to guess.
     buildCommand: |
       set -e
-      cd ..
       if [ -n "$GIT_SUBMODULE_TOKEN" ]; then
         git config --global url."https://x-access-token:$GIT_SUBMODULE_TOKEN@github.com/".insteadOf "https://github.com/"
       fi
+      npm ci --omit=dev --no-audit --no-fund
+      cd ..
       git submodule update --init --depth 1
-      cd web
-      npm ci --no-audit --no-fund
+      echo "--- disk ---"; df -h .
+      echo "--- content ---"; du -sh wiki_* | sort -h
 
     startCommand: npm start
 
