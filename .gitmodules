@@ -3,38 +3,44 @@
 ; standalone deployments keep working.
 ;
 ;   branch  = main    → `git submodule update --remote` follows that branch
-;   shallow = true    → `--depth 1`: the working files without ~400 MB of image
+;   shallow = true    → `--depth 1`: the working files without ~420 MB of image
 ;                        history, which is the real weight of these repos
 ;
 ; Content is published to the combined site by bumping the pointers:
 ;   git submodule update --remote && git commit -am "Bump city content"
 ;
-; Note the URLs use the `github-personal` SSH alias from ~/.ssh/config (the
-; personal Bonzatina key, not the default one). A build host will not have that
-; alias — see the deployment notes in CLAUDE.md.
+; The URLs are plain https on purpose — they have to resolve on a build host that
+; knows nothing about this machine's ~/.ssh/config. Locally they still go over SSH
+; as the personal account, because ~/.gitconfig rewrites them:
+;
+;   git config --global url."git@github-personal:Bonzatina/".insteadOf \
+;                          "https://github.com/Bonzatina/"
+;
+; The repositories are private, so a build host needs a credential of its own —
+; see the token handling in render.yaml.
 
 [submodule "wiki_berlin"]
 	path = wiki_berlin
-	url = git@github-personal:Bonzatina/Loiter-berlin.git
+	url = https://github.com/Bonzatina/Loiter-berlin.git
 	branch = main
 	shallow = true
 [submodule "wiki_bratislava"]
 	path = wiki_bratislava
-	url = git@github-personal:Bonzatina/Loiter-bratislava.git
+	url = https://github.com/Bonzatina/Loiter-bratislava.git
 	branch = main
 	shallow = true
 [submodule "wiki_budapest"]
 	path = wiki_budapest
-	url = git@github-personal:Bonzatina/Loiter-budapest.git
+	url = https://github.com/Bonzatina/Loiter-budapest.git
 	branch = main
 	shallow = true
 [submodule "wiki_dresden"]
 	path = wiki_dresden
-	url = git@github-personal:Bonzatina/Loiter-dresden.git
+	url = https://github.com/Bonzatina/Loiter-dresden.git
 	branch = main
 	shallow = true
 [submodule "wiki_wroclav"]
 	path = wiki_wroclav
-	url = git@github-personal:Bonzatina/Loiter-wroclav.git
+	url = https://github.com/Bonzatina/Loiter-wroclav.git
 	branch = main
 	shallow = true

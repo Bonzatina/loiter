@@ -1,0 +1,65 @@
+# Render Blueprint — deploy with "New > Blueprint" pointing at this repo.
+#
+# The Node app lives in web/; the city content is read at runtime from the
+# wiki_*/ submodules next to it. `rootDir` only sets the working directory, so
+# the whole repository is still checked out and ../wiki_berlin/wiki resolves.
+#
+# Two things Render does not do on its own:
+#   1. it does not initialise submodules — the build command does it;
+#   2. it cannot read PRIVATE submodules without a credential of its own.
+#
+# On the credential: try the first deploy WITHOUT setting GIT_SUBMODULE_TOKEN.
+# Render connects to GitHub through its own app, and if that app has access to the
+# five city repositories the submodules may check out with no token at all. If the
+# build fails on `git submodule update`, create a fine-grained personal access
+# token with `Contents: Read` on exactly those five repositories, set it as
+# GIT_SUBMODULE_TOKEN, and redeploy — no change to this file is needed, the rewrite
+# below is conditional.
+
+services:
+  - type: web
+    name: loiter
+    runtime: node
+    plan: free
+    rootDir: web
+    healthCheckPath: /
+
+    # --no-audit --no-fund sidesteps npm's "Exit handler never called" crash seen
+    # on Render's builders (network side-calls at the end of install).
+    #
+    # --depth 1 is the `shallow = true` from .gitmodules: the city working files
+    # without their image history, which is where the weight of these repos is.
+    # Note the classic shallow-submodule trap — a recorded pointer that has fallen
+    # behind its branch tip. GitHub permits fetching a commit by SHA, so this
+    # normally resolves anyway; if a deploy ever fails there, raise the depth.
+    buildCommand: |
+      set -e
+      cd ..
+      if [ -n "$GIT_SUBMODULE_TOKEN" ]; then
+        git config --global url."https://x-access-token:$GIT_SUBMODULE_TOKEN@github.com/".insteadOf "https://github.com/"
+      fi
+      git submodule update --init --depth 1
+      cd web
+      npm ci --no-audit --no-fund
+
+    startCommand: npm start
+
+    envVars:
+      # Read access to the five private city repositories. Leave unset on the
+      # first attempt — see the note above.
+      - key: GIT_SUBMODULE_TOKEN
+        sync: false
+
+      # Visitor notes. All three are required together: without them the note
+      # button is not rendered and POST /note answers 404, which is a valid state
+      # to deploy in — the site simply has no note form until they are set.
+      - key: NOTES_API_KEY
+        sync: false
+      - key: NOTES_TO
+        sync: false
+      - key: NOTES_SECRET
+        sync: false
+
+      # Absolute links in the note e-mail. Without it the moderator gets paths.
+      - key: SITE_URL
+        sync: false

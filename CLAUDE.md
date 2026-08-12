@@ -191,6 +191,20 @@ Two paths, same filesystem layout, so the code never branches:
   fired from each city repo on push). Pinning to a commit is the point: a build is
   reproducible and a bad content state can be rolled back.
 
+  **`.gitmodules` holds plain `https://github.com/…` URLs**, because they have to resolve
+  on a build host that knows nothing about this machine's `~/.ssh/config`. They still go
+  over SSH as the personal account locally, via a rewrite in `~/.gitconfig`:
+  `url."git@github-personal:Bonzatina/".insteadOf "https://github.com/Bonzatina/"`.
+  Do not put the SSH alias back into `.gitmodules` — that is what broke portability.
+
+  **The city repositories are private**, so a build host needs its own credential: a
+  fine-grained token with `Contents: Read` on those five repos, passed as
+  `GIT_SUBMODULE_TOKEN` and applied by a *conditional* rewrite in `render.yaml`. It is
+  conditional so the first deploy can be tried without it — Render reaches GitHub through
+  its own app, which may already have access. Making the repos public would remove the
+  token, the rewrite and the Actions secret entirely; that is the one cost of keeping them
+  private.
+
 City repos (branch `main`, `master` for rural):
 
 | Subproject | Repository |
