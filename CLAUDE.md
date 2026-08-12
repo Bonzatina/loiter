@@ -280,6 +280,15 @@ run side by side.
   needs a change, do it in that subproject, in its own commit, under its own `CLAUDE.md`.
 - **Log** aggregator work in `log.md` at this root: `## [YYYY-MM-DD] {kind} | summary`,
   same convention as the subprojects (`init`, `feat`, `fix`, `lint`, `convention`).
+- **Git identity is personal, and it is set per repository.** Every repo in this family
+  carries `user.name = bonzatina` and `user.email = martymckul@gmail.com` in its *local*
+  config, because the machine's global config is the corporate one
+  (`sergei.kulikov@devexpress.com`). A repo without the local override silently commits
+  under the work address — that is exactly how it got into `wiki_dresden` and
+  `wiki_wroclav`, whose histories had to be rewritten to remove it. Set the two values
+  before the first commit in any new repo here, and remember that the remote must be
+  reached through the `github-personal` SSH alias: plain `git@github.com` picks the
+  default key, which is the work account.
 - This file and log-entry prefixes stay in English as operational instructions; any
   user-facing text follows the subprojects' rule — Russian is the base language, English
   is the `.en` mirror.
