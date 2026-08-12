@@ -83,6 +83,19 @@ header span { font-size: 0.85rem; opacity: 0.75; }
   text-decoration: none;
 }
 .city-switcher li a:hover { background: #eef5ee; color: #2e7d32; }
+/* Group heading inside the dropdown — not a link. */
+.city-switcher li.city-group {
+  padding: 8px 14px 3px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: #aaa;
+}
+.city-switcher li.city-group:not(:first-child) {
+  border-top: 1px solid #ecece8;
+  margin-top: 4px;
+}
 /* The city you are already in. Still a link — from an about page it is the
    header's only way back to that city's map. */
 .city-switcher li.city-current a { font-weight: 600; color: #2e7d32; }

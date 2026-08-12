@@ -157,7 +157,7 @@ function formatBody(p: NotePayload): string {
     ['Слаг',             page.slug],
     ['URL',              url],
     ['Тип / домен',      `${page.type}${page.domain ? ` · ${page.domain}` : ''}`],
-    [city.districtLabel, `${page.district ?? '—'}${page.quarter ? ` · квартал: ${page.quarter}` : ''}`],
+    [city.districtLabel, `${page.area ?? '—'}${page.subarea ? ` · ${page.subarea}` : ''}`],
     ['Координаты',       page.coords ? `${page.coords[0]}, ${page.coords[1]}` : '—'],
     ['Дата визита',      values.visited || '—'],
     ['Отправлено',       `${sentAt} (${city.timezone})`],

@@ -18,7 +18,9 @@ Loiter/
 ├── CLAUDE.md                   ← this file — schema of the COMBINED site
 ├── web/                        ← the aggregator app (Express + Leaflet, TypeScript)
 │   ├── src/
-│   │   ├── cities.ts           ← THE CITY REGISTRY — the only per-city data
+│   │   ├── cities.ts           ← THE SITE REGISTRY — the only per-site data
+│   │   ├── taxonomy.ts         ← the two geographies: city and rural
+│   │   ├── map-routes.ts       ← railway/ferry polylines (rural only)
 │   │   ├── about/{slug}.ts     ← per-city about-page prose + source lists
 │   │   ├── lang.ts             ← the Lang / Localized types
 │   │   ├── constants.ts        ← shared marker colours, legend, UI strings
@@ -36,7 +38,7 @@ Loiter/
 ├── wiki_budapest/              ← city subproject
 ├── wiki_dresden/               ← city subproject
 ├── wiki_wroclav/               ← city subproject
-└── wiki_rural_travel/          ← OUT OF SCOPE for the combined site (see below)
+└── wiki_rural_travel/          ← the rural wiki — a second taxonomy, see below
 ```
 
 ### Subprojects are read-only from here
@@ -50,13 +52,29 @@ naming, language and style for their city. This file governs only the shared eng
 When a subproject's engine and this one drift, this one wins: the fix is to teach the
 registry a new field, not to special-case a city in the code.
 
-### wiki_rural_travel is excluded
+### Two taxonomies — `web/src/taxonomy.ts`
 
-Different taxonomy (regions / settlements / places / railways / ferries), different
-domain set, different marker colours and a different legend. It is deliberately **not**
-in the city registry. Keep the registry's shape open enough that a second taxonomy
-could be added later (a `taxonomy` field), but do not build for it now and do not let
-its conventions leak into the city path.
+The family speaks two shapes of geography, and the engine does not branch on which:
+
+- **city** — places nest under a `district` and an optional `quarter`; transport is out
+  of scope.
+- **rural** — places nest under a `region` and an optional `subregion`, and the wiki adds
+  heritage railways and ferry crossings drawn as lines.
+
+Each site declares a taxonomy; the loader normalises both frontmatter dialects into ONE
+internal pair, **`area` and `subarea`**, and every renderer reads only those. `district`,
+`quarter`, `region` and `subregion` appear nowhere downstream — not in `map.js`, not in the
+templates. Adding a third geography means an entry in `taxonomy.ts`, not an `if`.
+
+The taxonomy also carries `flatDirs`, `ignoreDirs`, `typeDirs`, the two page types
+(`areaType`/`subareaType`), the `routeTypes` the `transport` legend button filters, and the
+UI keys for the list headings. `ignoreDirs` matters: an unlisted top-level directory is
+otherwise **treated as an area** and probed for `typeDirs`, so the rural wiki's `sources/`
+(400 provenance pages its own app renders in no section) and `raw/` are named explicitly
+rather than left to luck.
+
+`kind: 'city' | 'rural'` is separate from the taxonomy and only affects presentation: the
+picker and the switcher group by it so the rural wiki is not offered as a sixth city.
 
 ## The City Registry — `web/src/cities.ts`
 
@@ -67,6 +85,9 @@ constant may appear. Everything the old per-city engines hard-coded becomes a fi
 |---|---|---|
 | `slug` | `berlin` | — (new: the URL segment) |
 | `dir` | `wiki_berlin` | `WIKI_ROOT` in `wiki.ts`, the `/assets` static mount |
+| `kind` | `city` / `rural` | — (new: how the picker and switcher group) |
+| `taxonomy` | `CITY_TAXONOMY` | the folder names and field names in `wiki.ts`, `map.js` |
+| `routes` | `NO_ROUTES` / `RURAL_ROUTES` | the `ROUTES` array in `constants.ts` |
 | `brand` | `Loiter: Berlin` | the literal in `page-map.ts`, `page-detail.ts`, `shared.ts` |
 | `name.ru` / `name.en` | `Берлин` / `Berlin` | city switcher and picker labels |
 | `center` / `zoom` | `[52.5200, 13.4050]` / `11` | the `setView(...)` line in `map.js` |
@@ -101,8 +122,13 @@ Notes on two of the fields:
   places — deliberately: it is one text in one place in the code, and a reader who lands
   on a city's about page should not have to go elsewhere to learn what the project is.
 
-Adding a sixth city = one registry entry + one `src/about/` file + the submodule. No
-other code change.
+Adding a site = one registry entry + one `src/about/` file + the submodule. No other code
+change, as long as it speaks a taxonomy that already exists.
+
+**The type is still called `City`** although the registry now holds the rural wiki too.
+That is historical; `kind` is what to branch on. Renaming `City` → `Site` throughout is a
+worthwhile follow-up, deliberately not done in the same change that added a second
+taxonomy to a live deployment.
 
 **Slug ≠ directory.** `slug` is user-facing and `dir` is historical, so they are allowed
 to differ: Wrocław is served at `/wroclaw` while its subproject folder and repository
@@ -214,7 +240,7 @@ City repos (branch `main`, `master` for rural):
 | `wiki_budapest` | `Bonzatina/Loiter-budapest` |
 | `wiki_dresden` | `Bonzatina/Loiter-dresden` |
 | `wiki_wroclav` | `Bonzatina/Loiter-wroclav` |
-| `wiki_rural_travel` | `Bonzatina/rural_travel` (not a submodule — excluded) |
+| `wiki_rural_travel` | `Bonzatina/rural_travel` (branch `master`, not `main`) |
 
 **Image weight is the real constraint**, not the markdown: the city `web/assets/`
 folders total roughly 420 MB (Berlin alone ~190 MB), and because the images are
@@ -236,10 +262,24 @@ These are the properties that keep the site one system rather than five:
   `DATA.city.stateKey`. If a change needs a new literal, it needs a new registry field.
 - **One CSS set.** `styles/` is shared verbatim; there is no per-city stylesheet and no
   per-city override block. Image display size stays capped globally in `detail.css`.
-- **One marker vocabulary.** `MARKER_COLOR` (district / quarter / place), `DOMAIN_COLOR`
-  and `LEGEND_TYPES` in `constants.ts` are the single source of truth. A new domain =
-  an entry in `DOMAIN_COLOR` and `LEGEND_TYPES`, a label in `UI_STRINGS.*.legend`, and
-  the domain listed in the `domains` array of the cities that have it.
+- **One marker vocabulary, shared across taxonomies.** `MARKER_COLOR`, `DOMAIN_COLOR` and
+  `LEGEND_TYPES` in `constants.ts` are the single source of truth. A new domain = an entry
+  in `DOMAIN_COLOR` and `LEGEND_TYPES`, a label in `UI_STRINGS.*.legend`, and the domain
+  listed in the `domains` array of the sites that have it.
+
+  **A hue means one thing everywhere, and analogous roles share a hue.** A reader
+  switching between a city and the countryside must be able to keep reading the map, so
+  `region` is the same green as `district` and `settlement` the same blue-grey as
+  `quarter`. Three defects were fixed when the rural wiki joined, and none of them should
+  be reintroduced: its `transport` was the museum purple (`#9a7bb0` against `#8e6c9e` —
+  indistinguishable at marker size, and it meant transport on one site and museums on
+  another), so transport is now brown `#795548`; its `settlement` was `#1565c0`, the very
+  blue `map.js` uses for the "you are here" dot and the selection rectangle; and its
+  museums and thermal baths had no colour at all, so 122 museums and 10 baths were drawn
+  as ordinary olive sights while the city maps showed them purple and orange.
+
+  `page-map.ts` narrows `domainColors` to the site's declared `domains`, so a colour can
+  never disagree with the legend that filters it.
 - **One set of UI strings.** `UI_STRINGS.ru` / `UI_STRINGS.en` in `constants.ts`. List
   section headers are localized; the legend filter buttons above the map stay in English,
   matching the subprojects. Counted nouns go through `plural()` (`src/plural.ts`) — the

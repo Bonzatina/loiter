@@ -18,7 +18,7 @@ export interface CityCard {
 export function renderCitiesPage(cards: CityCard[], lang: Lang = 'ru'): string {
   const ui = UI_STRINGS[lang]
 
-  const items = cards.map(({ city, pages }) => `
+  const card = ({ city, pages }: CityCard) => `
     <a class="city-card" href="${homeUrl(city.slug, lang)}">
       <span class="city-card-image">
         <img src="${assetsPrefix(city.slug)}/${city.cardImage}" alt="${city.name[lang]}" loading="lazy">
@@ -27,7 +27,20 @@ export function renderCitiesPage(cards: CityCard[], lang: Lang = 'ru'): string {
         <span class="city-card-name">${city.name[lang]}</span>
         <span class="city-card-count">${pages} ${plural(pages, lang, ui.pages)}</span>
       </span>
-    </a>`).join('')
+    </a>`
+
+  // Grouped by kind, so the rural wiki is not presented as a sixth city. Headings
+  // appear only when there is more than one group to tell apart.
+  const groups: [string, CityCard[]][] = [
+    [ui.groupCities, cards.filter(c => c.city.kind === 'city')],
+    [ui.groupRural, cards.filter(c => c.city.kind === 'rural')],
+  ].filter(([, list]) => list.length > 0) as [string, CityCard[]][]
+
+  const items = groups.map(([heading, list]) => {
+    const grid = `<div class="city-grid">${list.map(card).join('')}
+  </div>`
+    return groups.length > 1 ? `<h2 class="city-group-heading">${heading}</h2>${grid}` : grid
+  }).join('')
 
   const intro = lang === 'en'
     ? 'Interactive encyclopaedias for exploring cities on foot: architecture, history, museums, parks, culture, and specific places worth seeing with your own eyes.'
@@ -57,8 +70,7 @@ export function renderCitiesPage(cards: CityCard[], lang: Lang = 'ru'): string {
     <p id="find-me-status" class="find-me-status" hidden></p>
   </div>
 
-  <div class="city-grid">${items}
-  </div>
+  ${items}
 </div>
 
 <script>

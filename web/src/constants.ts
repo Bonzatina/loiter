@@ -1,60 +1,83 @@
 import type { City } from './cities'
 
 // ── Shared visual vocabulary ─────────────────────────────────────────────────
-// One definition for every city. Change a colour here and it changes on all of
-// them; there is no per-city colour table and no per-city stylesheet.
+// One definition for every site. Change a colour here and it changes everywhere;
+// there is no per-site colour table and no per-site stylesheet.
+//
+// The colours are shared ACROSS taxonomies on purpose. A reader switching from a
+// city to the rural wiki must be able to keep reading the map: the same hue has to
+// mean the same kind of thing on both sides, and a hue must never mean two
+// different things. Hence `region` is the same green as `district` and
+// `settlement` the same blue-grey as `quarter` — the analogous slots — while
+// `transport` is deliberately NOT the museum purple it used to collide with.
 
 /**
- * Marker colours by page `type`. `district` is a city's top-level administrative
- * unit (Bezirk, kerület, mestská časť, Stadtbezirk, dzielnica — the wikis all map
- * it to `district`); `quarter` is a named area within one; `place` is a specific
- * attraction, recoloured by domain below.
+ * Marker colours by page `type`.
+ *
+ * `district`/`region` is a site's top-level area (Bezirk, kerület, mestská časť,
+ * Stadtbezirk, dzielnica, or a rural region); `quarter`/`settlement` is a named
+ * area inside one; `place` is a specific attraction and gets recoloured by domain
+ * below. `railway`/`ferry` are rural-only linear objects.
  */
 export const MARKER_COLOR: Record<string, string> = {
-  district: '#2e7d32',
-  quarter:  '#607d8b',
-  place:    '#a0b930',
+  district:   '#2e7d32',
+  region:     '#2e7d32',   // same slot as district — same green
+  quarter:    '#607d8b',
+  settlement: '#607d8b',   // same slot as quarter — same blue-grey
+  place:      '#a0b930',
+  railway:    '#795548',
+  ferry:      '#795548',
 }
 
 /** Domain colours for `place` markers. A place's first matching domain wins. */
 export const DOMAIN_COLOR: Record<string, string> = {
-  nature:  '#00acc1',
-  thermal: '#e8743b',
-  museums: '#8e6c9e',
-  lookout: '#c49a2a',
+  nature:    '#00acc1',
+  thermal:   '#e8743b',
+  museums:   '#8e6c9e',
+  lookout:   '#c49a2a',
+  transport: '#795548',
 }
 
 /**
  * Every legend filter button the engine knows, in display order. The key MUST
- * equal either a page `type` (district/quarter) or a place `domain`
- * (sights/museums/nature/thermal/lookout) for filtering to work; `sights` is the
- * default bucket for places without a filtered domain.
+ * equal either a page `type` (district/region/quarter/settlement) or a place
+ * `domain` (sights/museums/nature/thermal/lookout/transport) for filtering to
+ * work; `sights` is the default bucket for places without a filtered domain.
+ * `transport` also covers the `railway` and `ferry` page types — see
+ * `taxonomy.routeTypes` and `isVisible` in scripts/map.js.
  *
- * A city shows the two structural buttons plus `sights` plus whichever domains it
- * lists in `city.domains` — see `legendFor` below. Adding a domain to the family
- * means one entry here, one in DOMAIN_COLOR and a label in UI_STRINGS.*.legend.
+ * A site shows its taxonomy's two structural buttons plus `sights` plus whichever
+ * domains it lists in `site.domains` — see `legendFor` below. Adding a domain to
+ * the family means one entry here, one in DOMAIN_COLOR, and a label in
+ * UI_STRINGS.*.legend.
  */
 export const LEGEND_TYPES: Record<string, string> = {
-  district: '#2e7d32',
-  quarter:  '#607d8b',
-  sights:   '#a0b930',
-  museums:  '#8e6c9e',
-  nature:   '#00acc1',
-  thermal:  '#e8743b',
-  lookout:  '#c49a2a',
+  district:   '#2e7d32',
+  region:     '#2e7d32',
+  quarter:    '#607d8b',
+  settlement: '#607d8b',
+  sights:     '#a0b930',
+  museums:    '#8e6c9e',
+  nature:     '#00acc1',
+  thermal:    '#e8743b',
+  lookout:    '#c49a2a',
+  transport:  '#795548',
 }
 
-/** Buttons that are structural, not domain-driven — always shown. */
-const ALWAYS_SHOWN = ['district', 'quarter', 'sights']
-
 /**
- * The legend for one city: the structural buttons plus the domains it actually
- * has objects for, in the canonical LEGEND_TYPES order. A city with no thermal
- * baths simply never lists `thermal` and the button does not appear — which is
- * what the standalone engines achieved by commenting the line out per city.
+ * The legend for one site: its taxonomy's structural buttons, then `sights`, then
+ * the domains it actually has objects for, in the canonical LEGEND_TYPES order.
+ * A city with no thermal baths simply never lists `thermal` and the button does
+ * not appear — which is what the standalone engines achieved by commenting the
+ * line out in each city's copy of this file.
  */
 export function legendFor(city: City): Record<string, string> {
-  const allowed = new Set([...ALWAYS_SHOWN, ...city.domains])
+  const allowed = new Set([
+    city.taxonomy.areaType,
+    city.taxonomy.subareaType,
+    'sights',
+    ...city.domains,
+  ])
   return Object.fromEntries(
     Object.entries(LEGEND_TYPES).filter(([type]) => allowed.has(type)),
   )
@@ -66,12 +89,16 @@ export const UI_STRINGS = {
     startStation:    'начальная станция',
     terminus:        'конечная',
     // Заголовки разделов списка — локализованы; всегда по-английски остаётся
-    // только легенда-фильтры над картой (см. `legend` ниже).
+    // только легенда-фильтры над картой (см. `legend` ниже). Какая пара
+    // используется, решает taxonomy.labelKeys: районы/кварталы или регионы/
+    // населённые пункты.
     districts:       'Районы',
     quarters:        'Кварталы',
+    regions:         'Регионы',
+    settlements:     'Населённые пункты',
     places:          'Достопримечательности',
     railways:        'Железные дороги',
-    ferries:         'Паромы',
+    ferries:         'Паромные переправы',
     concepts:        'Концепции',
     people:          'Персоналии',
     noItems:         'Нет объектов в текущей области — переместите карту или уменьшите масштаб.',
@@ -94,8 +121,10 @@ export const UI_STRINGS = {
     searchPlaceholder:   'Поиск по названию, тегу, району…',
     // Мультигородская обвязка — этого не было в одногородних движках.
     about:               'О проекте',
-    allCities:           'Все города',
-    chooseCity:          'Выберите город',
+    allCities:           'Все проекты',
+    chooseCity:          'Выберите проект',
+    groupCities:         'Города',
+    groupRural:          'Сельская местность',
     // Три формы для согласования с числительным — см. src/plural.ts.
     pages:               { one: 'страница', few: 'страницы', many: 'страниц' },
     geo: {
@@ -128,13 +157,16 @@ export const UI_STRINGS = {
       errMail:     'Не удалось отправить письмо. Скопируйте текст и пришлите его почтой:',
     },
     legend: {
-      district: 'districts',
-      quarter:  'quarters',
-      sights:   'sights',
-      museums:  'museums',
-      nature:   'nature',
-      thermal:  'baths',
-      lookout:  'lookouts',
+      district:   'districts',
+      region:     'regions',
+      quarter:    'quarters',
+      settlement: 'settlements',
+      sights:     'sights',
+      museums:    'museums',
+      nature:     'nature',
+      thermal:    'baths',
+      lookout:    'lookouts',
+      transport:  'transport',
     } as Record<string, string>,
   },
   en: {
@@ -143,6 +175,8 @@ export const UI_STRINGS = {
     terminus:        'terminus',
     districts:       'Districts',
     quarters:        'Quarters',
+    regions:         'Regions',
+    settlements:     'Settlements',
     places:          'Sights',
     railways:        'Railways',
     ferries:         'Ferries',
@@ -167,8 +201,10 @@ export const UI_STRINGS = {
     showOnMap:           'Show on map →',
     searchPlaceholder:   'Search by name, tag, district…',
     about:               'About',
-    allCities:           'All cities',
-    chooseCity:          'Choose a city',
+    allCities:           'All projects',
+    chooseCity:          'Choose a project',
+    groupCities:         'Cities',
+    groupRural:          'Countryside',
     pages:               { one: 'page', few: 'pages', many: 'pages' },
     geo: {
       findMe:  '⊕ Find me',
@@ -199,20 +235,20 @@ export const UI_STRINGS = {
       errMail:     'The message could not be sent. Copy your text and mail it to:',
     },
     legend: {
-      district: 'districts',
-      quarter:  'quarters',
-      sights:   'sights',
-      museums:  'museums',
-      nature:   'nature',
-      thermal:  'baths',
-      lookout:  'lookouts',
+      district:   'districts',
+      region:     'regions',
+      quarter:    'quarters',
+      settlement: 'settlements',
+      sights:     'sights',
+      museums:    'museums',
+      nature:     'nature',
+      thermal:    'baths',
+      lookout:    'lookouts',
+      transport:  'transport',
     } as Record<string, string>,
   },
 } as const
 export type UIStrings = typeof UI_STRINGS.ru
-
-/** Transport is out of scope in every city wiki — the route layer stays empty. */
-export const ROUTES: { slug: string; type: 'railway' | 'ferry'; points: [number, number][]; terminus: string }[] = []
 
 /** Contact shown on the about page and used as the note mailto: fallback. */
 export const PROJECT_EMAIL = 'loiter.traveler@gmail.com'

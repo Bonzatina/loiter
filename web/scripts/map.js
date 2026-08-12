@@ -1,18 +1,35 @@
-// Everything city-specific arrives in `city` — the client holds no city constant
-// of its own, so this file is identical for all of them.
-const { pages: allPages, routes, colors, domainColors, legendTypes, legendColors, lang, ui, city } = window.DATA
+// Everything site-specific arrives in `city` and `taxonomy` — the client holds no
+// constant of its own, so this file is identical for every site and every geography.
+const { pages: allPages, routes, colors, domainColors, legendTypes, legendColors, lang, ui, city, taxonomy } = window.DATA
 
-// District pages carry no coordinates of their own — their marker sits at the
-// centroid of the places belonging to the district (place.district === district.slug).
-// A district with a single place is nudged slightly north so the two markers don't overlap.
-allPages.forEach(r => {
-  if (r.type !== 'district' || r.coords) return
-  const pts = allPages.filter(p => p.coords && p.district === r.slug)
-  if (!pts.length) return
-  const lat = pts.reduce((s, p) => s + p.coords[0], 0) / pts.length
-  const lng = pts.reduce((s, p) => s + p.coords[1], 0) / pts.length
-  r.coords = pts.length === 1 ? [lat + 0.0015, lng] : [lat, lng]
-})
+function norm(s) { return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '') }
+const key = s => (s == null ? '' : norm(String(s)))
+
+// Area pages (a city district, a rural region) rarely carry coordinates of their
+// own: the marker sits at the centroid of its members. Members are matched on
+// EITHER `area` or `subarea`, because a rural region page may stand for a
+// sub-region slug, and matched case- and diacritic-insensitively — `Hortobágy` the
+// page has to find `hortobágy` the folder. A page may also declare which key it
+// represents in its own `area` field, so that a filename and a slug are allowed to
+// differ. An area with no members gets no marker; a manual `coords` still wins.
+// A single member is nudged north so the two markers do not sit on top of each other.
+;(function assignAreaCoords() {
+  const members = {}
+  for (const p of allPages) {
+    if (!p.coords || p.type === taxonomy.areaType) continue
+    for (const k of [key(p.area), key(p.subarea)]) {
+      if (k) (members[k] = members[k] || []).push(p.coords)
+    }
+  }
+  for (const r of allPages) {
+    if (r.type !== taxonomy.areaType || r.coords) continue
+    const pts = members[key(r.area || r.slug)]
+    if (!pts || !pts.length) continue
+    const lat = pts.reduce((s, c) => s + c[0], 0) / pts.length
+    const lng = pts.reduce((s, c) => s + c[1], 0) / pts.length
+    r.coords = pts.length === 1 ? [lat + 0.0015, lng] : [lat, lng]
+  }
+})()
 
 const mappable = allPages.filter(p => p.coords)
 // Page URLs are namespaced by city: /{city}/{slug}, /en/{city}/{slug}.
@@ -23,15 +40,13 @@ function pageTitle(p) { return (lang === 'en' && p.enTitle) ? p.enTitle : p.titl
 
 let searchQuery = ''
 
-function norm(s) { return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '') }
-
 function matchesQuery(p, q) {
   const needle = norm(q)
   if (norm(p.title || '').includes(needle)) return true
   if (p.enTitle && norm(p.enTitle).includes(needle)) return true
   if (p.tags && p.tags.some(t => norm(String(t)).includes(needle))) return true
-  if (p.district && norm(p.district).includes(needle)) return true
-  if (p.quarter && norm(p.quarter).includes(needle)) return true
+  if (p.area && norm(p.area).includes(needle)) return true
+  if (p.subarea && norm(p.subarea).includes(needle)) return true
   return false
 }
 
@@ -42,7 +57,10 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 const activeTypes = new Set(legendTypes)
 function isVisible(type, domain) {
-  if (type === 'railway' || type === 'ferry') return activeTypes.has('transport')
+  // Railways and ferries have no domain of their own; the `transport` button
+  // filters them. Which types those are comes from the taxonomy, so a city — where
+  // transport is out of scope — simply has none.
+  if (taxonomy.routeTypes.includes(type)) return activeTypes.has('transport')
   if (type === 'place') {
     if (domain) {
       for (const d of domain.split(',').map(s => s.trim())) {
@@ -60,8 +78,10 @@ function placeRadius(zoom) {
   return 7.7
 }
 function markerRadius(p) {
-  if (p.type === 'district') return 9
-  if (p.type === 'place' || p.type === 'ferry' || p.type === 'railway') return placeRadius(map.getZoom())
+  // One radius for the area role, city or region: the same kind of object should
+  // look the same size after switching sites.
+  if (p.type === taxonomy.areaType) return 9
+  if (p.type === 'place' || taxonomy.routeTypes.includes(p.type)) return placeRadius(map.getZoom())
   return 8.8
 }
 
@@ -123,7 +143,7 @@ const markerObjects = mappable.map(p => {
   .addTo(map)
   .bindPopup(
     `<strong>${pageTitle(p)}</strong><br>` +
-    `<small>${p.type}${p.quarter ? ' · ' + p.quarter : ''}</small><br>` +
+    `<small>${p.type}${p.subarea ? ' · ' + p.subarea : ''}</small><br>` +
     `<a href="${wikiBase}/${encodeURIComponent(p.slug)}">${ui.open}</a>`
   )
   return { marker, page: p, baseColor: color }
@@ -203,31 +223,42 @@ function section(title, items, cls) {
 }
 
 function renderList(visible, opts = {}) {
+  const { areaType, subareaType } = taxonomy
   const byType = t => visible.filter(p => p.type === t)
-  const quarters = byType('quarter')
-  const byDistrict = {}
-  quarters.forEach(p => {
-    const k = p.district || '—'
-    ;(byDistrict[k] = byDistrict[k] || []).push(p)
+
+  // Sub-areas are grouped under the area they belong to — quarters under their
+  // district, settlements under their region.
+  const subareas = byType(subareaType)
+  const byArea = {}
+  subareas.forEach(p => {
+    const k = p.area || '—'
+    ;(byArea[k] = byArea[k] || []).push(p)
   })
-  const visibleDistricts = new Set(visible.filter(p => p.coords).map(p => p.district).filter(Boolean))
+
+  const visibleAreas = new Set(visible.filter(p => p.coords).map(p => p.area).filter(Boolean))
   const concepts = opts.searchMode
     ? byType('concept')
-    : allPages.filter(p => p.type === 'concept' && (!p.district || visibleDistricts.has(p.district)))
+    : allPages.filter(p => p.type === 'concept' && (!p.area || visibleAreas.has(p.area)))
   const people = opts.searchMode
     ? byType('person')
     : allPages.filter(p => p.type === 'person')
-  let html = section(ui.districts, byType('district'), 'district')
+
+  let html = section(ui[taxonomy.labelKeys.area], byType(areaType), areaType)
   html += section(ui.concepts, concepts, 'concept')
-  if (quarters.length) {
-    html += `<h2>${ui.quarters} <span class="count">${quarters.length}</span></h2>`
-    Object.entries(byDistrict).sort().forEach(([dist, items]) => {
-      html += `<h3>${dist}</h3><div class="pill-list">${pills(items, 'quarter')}</div>`
+  if (subareas.length) {
+    html += `<h2>${ui[taxonomy.labelKeys.subarea]} <span class="count">${subareas.length}</span></h2>`
+    Object.entries(byArea).sort().forEach(([area, items]) => {
+      html += `<h3>${area}</h3><div class="pill-list">${pills(items, subareaType)}</div>`
     })
   }
   html += section(ui.places, byType('place'), 'place')
-  if (isVisible('railway') || opts.searchMode) html += section(ui.railways, byType('railway'), 'railway')
-  if (isVisible('ferry')   || opts.searchMode) html += section(ui.ferries,  byType('ferry'),   'ferry')
+  // Rural only: a city's taxonomy lists no route types, so neither section appears.
+  if (taxonomy.routeTypes.includes('railway') && (isVisible('railway') || opts.searchMode)) {
+    html += section(ui.railways, byType('railway'), 'railway')
+  }
+  if (taxonomy.routeTypes.includes('ferry') && (isVisible('ferry') || opts.searchMode)) {
+    html += section(ui.ferries, byType('ferry'), 'ferry')
+  }
   html += section(ui.people, people, 'person')
   if (!html) html = `<p class="hint">${ui.noItems}</p>`
   document.getElementById('list-content').innerHTML = html

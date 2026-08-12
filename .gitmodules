@@ -44,3 +44,9 @@
 	url = https://github.com/Bonzatina/Loiter-wroclav.git
 	branch = main
 	shallow = true
+; The rural wiki, unlike the city repos, still lives on `master`.
+[submodule "wiki_rural_travel"]
+	path = wiki_rural_travel
+	url = https://github.com/Bonzatina/rural_travel.git
+	branch = master
+	shallow = true

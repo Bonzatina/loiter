@@ -72,16 +72,25 @@ h3 { font-size: 0.85rem; color: #888; margin: 16px 0 6px; text-transform: upperc
   text-decoration: none;
 }
 .pill:hover { background: #cde1f7; }
-.pill.district { background: #e8f5e9; border-color: #a5d6a7; color: #2e7d32; font-weight: 600; }
-.pill.district:hover { background: #c8e6c9; }
-.pill.quarter  { background: #eceff1; border-color: #b0bec5; color: #455a64; font-weight: 600; }
-.pill.quarter:hover { background: #cfd8dc; }
+/* `district` and `region` are the same role in two taxonomies, as are `quarter`
+   and `settlement`, so they share their styling — a reader switching between a
+   city and the rural wiki should not have to relearn the list. */
+.pill.district,
+.pill.region { background: #e8f5e9; border-color: #a5d6a7; color: #2e7d32; font-weight: 600; }
+.pill.district:hover,
+.pill.region:hover { background: #c8e6c9; }
+.pill.quarter,
+.pill.settlement { background: #eceff1; border-color: #b0bec5; color: #455a64; font-weight: 600; }
+.pill.quarter:hover,
+.pill.settlement:hover { background: #cfd8dc; }
 .pill.place   { background: #f7f9e8; border-color: #c5d742; color: #6e8000; }
 .pill.place:hover { background: #ecf2d0; }
-.pill.railway { background: #f3e5f5; border-color: #ce93d8; color: #6a1b9a; }
-.pill.railway:hover { background: #e8d5f0; }
-.pill.ferry   { background: #e0f4f5; border-color: #80cbc4; color: #00838f; }
-.pill.ferry:hover { background: #c8ecee; }
+/* Brown, to agree with the `transport` marker colour. These used to be purple,
+   which put them next to the museum purple for no reason. */
+.pill.railway,
+.pill.ferry   { background: #efebe9; border-color: #bcaaa4; color: #5d4037; }
+.pill.railway:hover,
+.pill.ferry:hover { background: #e3dbd7; }
 .pill.concept { background: #e8eaf6; border-color: #9fa8da; color: #283593; }
 .pill.concept:hover { background: #d9dcf0; }
 .pill.person  { background: #fff8e1; border-color: #ffecb3; color: #e65100; }

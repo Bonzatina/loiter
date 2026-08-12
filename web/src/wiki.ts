@@ -5,16 +5,19 @@ import matter from 'gray-matter'
 import { contentRoot, type City } from './cities'
 
 // ── Multi-root content loader ────────────────────────────────────────────────
-// One content root per city, each the `wiki/` directory of a subproject. The
+// One content root per site, each the `wiki/` directory of a subproject. The
 // loader is read-only: nothing here ever writes into a subproject.
 //
-// The folder convention is the same as in the standalone engines, so no city
-// needs a code change to gain a district — every top-level directory that is not
-// one of FLAT_DIRS is a district, read through its `quarters/` and `places/`
-// subfolders.
+// The folder convention comes from the site's taxonomy, so no site needs a code
+// change to gain an area — every top-level directory that is not one of the
+// taxonomy's `flatDirs` is an area, read through its `typeDirs` subfolders.
+//
+// Two frontmatter dialects arrive here — `district`/`quarter` from the cities and
+// `region`/`subregion` from the rural wiki — and both are normalised into ONE
+// internal pair, `area`/`subarea`. Nothing downstream has to know which it got.
 
 export interface WikiPage {
-  /** City slug this page belongs to. Pages are never mixed across cities. */
+  /** Site slug this page belongs to. Pages are never mixed across sites. */
   city: string
   /** Filename without the .md extension — the URL segment and wikilink target. */
   slug: string
@@ -23,8 +26,10 @@ export interface WikiPage {
   title: string
   enTitle?: string
   type: string
-  district?: string
-  quarter?: string
+  /** Normalised from `district:` (cities) or `region:` (rural). */
+  area?: string
+  /** Normalised from `quarter:` (cities) or `subregion:` (rural). */
+  subarea?: string
   coords?: [number, number]
   domain?: string
   tags?: string[]
@@ -32,19 +37,6 @@ export interface WikiPage {
 
 /** The page shape the map client receives — `filePath` deliberately dropped. */
 export type ClientPage = Omit<WikiPage, 'filePath'>
-
-/**
- * Flat cross-district directories: not nested under a district folder.
- * `districts/` holds the district overview pages themselves.
- */
-const FLAT_DIRS = ['districts', 'concepts', 'people', 'sources']
-
-/**
- * Type subdirectories expected inside each district folder. `quarters` are named
- * areas (grouped by district in the list), `places` specific attractions.
- * Transport is out of scope in every city wiki.
- */
-const TYPE_DIRS = ['quarters', 'places']
 
 /**
  * Coordinates must be a pair of finite numbers to be usable as a marker. A
@@ -87,6 +79,7 @@ async function readDir(city: City, dir: string): Promise<WikiPage[]> {
     } catch {}
 
     const slug = entry.replace(/\.md$/, '')
+    const { areaField, subareaField } = city.taxonomy
     pages.push({
       city: city.slug,
       slug,
@@ -94,8 +87,8 @@ async function readDir(city: City, dir: string): Promise<WikiPage[]> {
       title: data.title as string,
       enTitle,
       type: (data.type as string) ?? 'unknown',
-      district: data.district as string | undefined,
-      quarter: data.quarter as string | undefined,
+      area: data[areaField] as string | undefined,
+      subarea: data[subareaField] as string | undefined,
       coords: readCoords(data.coords, `${city.slug}/${slug}`),
       domain: data.domain as string | undefined,
       tags: data.tags as string[] | undefined,
@@ -106,36 +99,42 @@ async function readDir(city: City, dir: string): Promise<WikiPage[]> {
 
 async function loadCity(city: City): Promise<WikiPage[]> {
   const root = contentRoot(city)
+  const { flatDirs, ignoreDirs, typeDirs } = city.taxonomy
 
-  // Flat cross-district directories.
+  // Cross-area directories.
   const flatPages = (await Promise.all(
-    FLAT_DIRS.map(d => readDir(city, path.join(root, d))),
+    flatDirs.map(d => readDir(city, path.join(root, d))),
   )).flat()
 
-  // Discover district directories: any top-level dir that is not a flat one.
+  // Discover area directories: any top-level dir that is not a flat one.
   let topEntries: string[]
   try {
     topEntries = await fs.readdir(root)
   } catch {
     // A missing content root means the submodule is not checked out. Serve the
-    // city empty rather than taking the whole site down with it.
+    // site empty rather than taking the whole thing down with it.
     console.warn(`[wiki] content root missing for "${city.slug}": ${root}`)
     return flatPages
   }
 
-  const districtDirs: string[] = []
+  // Every top-level directory that is not flat content and not explicitly ignored
+  // counts as an area. `ignoreDirs` exists because the default is "treat it as an
+  // area", which would otherwise probe the rural wiki's `sources/` and `raw/` for
+  // area subfolders.
+  const skip = new Set([...flatDirs, ...ignoreDirs])
+  const areaDirs: string[] = []
   for (const entry of topEntries) {
-    if (FLAT_DIRS.includes(entry)) continue
+    if (skip.has(entry)) continue
     const full = path.join(root, entry)
     const stat = await fs.stat(full).catch(() => null)
-    if (stat?.isDirectory()) districtDirs.push(full)
+    if (stat?.isDirectory()) areaDirs.push(full)
   }
 
-  const districtPages = (await Promise.all(
-    districtDirs.flatMap(dd => TYPE_DIRS.map(t => readDir(city, path.join(dd, t)))),
+  const areaPages = (await Promise.all(
+    areaDirs.flatMap(ad => typeDirs.map(t => readDir(city, path.join(ad, t)))),
   )).flat()
 
-  return [...flatPages, ...districtPages]
+  return [...flatPages, ...areaPages]
 }
 
 // ── Cache ────────────────────────────────────────────────────────────────────

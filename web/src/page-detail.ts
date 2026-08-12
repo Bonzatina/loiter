@@ -107,8 +107,8 @@ export function renderDetailPage(
 ): string {
   const meta = [
     `<span class="badge">${page.type}</span>`,
-    page.district ? `<span class="badge">${page.district}</span>` : '',
-    page.quarter  ? `<span class="badge">${page.quarter}</span>`  : '',
+    page.area    ? `<span class="badge">${page.area}</span>`    : '',
+    page.subarea ? `<span class="badge">${page.subarea}</span>` : '',
     page.domain   ? `<span class="badge">${page.domain}</span>`   : '',
     page.coords   ? `<span class="badge">${page.coords[0]}, ${page.coords[1]}</span>` : '',
   ].filter(Boolean).join('')

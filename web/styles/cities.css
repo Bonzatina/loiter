@@ -53,6 +53,18 @@
 .find-me-status.warn { background: #fff8e1; border-left: 3px solid #f9a825; color: #6b5400; }
 .find-me-status a    { color: #1565c0; }
 
+/* Group headings: cities and the countryside are different kinds of thing, and
+   the picker says so rather than listing six equal cards. */
+.city-group-heading {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: #999;
+  margin: 26px 0 12px;
+}
+.city-group-heading:first-of-type { margin-top: 0; }
+
 .city-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));

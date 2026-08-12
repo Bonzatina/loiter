@@ -1,13 +1,21 @@
 import type { City } from './cities'
 import type { Lang } from './lang'
 import { toClientPages, type WikiPage } from './wiki'
-import { MARKER_COLOR, DOMAIN_COLOR, ROUTES, UI_STRINGS, legendFor } from './constants'
+import { MARKER_COLOR, DOMAIN_COLOR, UI_STRINGS, legendFor } from './constants'
 import { renderHeader, renderHtmlDocument } from './shared'
 
 export function renderPage(city: City, pages: WikiPage[], lang: Lang = 'ru'): string {
   const ui = UI_STRINGS[lang]
-  // Only the domains this city has objects for — see legendFor in constants.ts.
+  // Only the domains this site has objects for — see legendFor in constants.ts.
   const legend = legendFor(city)
+
+  // Marker colours are narrowed to the same domain set as the legend. Otherwise a
+  // page carrying a domain the site never declared would be drawn in that domain's
+  // colour while being filtered as an ordinary sight — colour and legend saying
+  // different things. Nothing hits this today; it is closed by construction.
+  const domainColors = Object.fromEntries(
+    Object.entries(DOMAIN_COLOR).filter(([d]) => city.domains.includes(d)),
+  )
 
   return renderHtmlDocument({
     lang,
@@ -39,9 +47,9 @@ ${renderHeader(city, undefined, { current: lang })}
 <script>
   window.DATA = {
     pages: ${JSON.stringify(toClientPages(pages))},
-    routes: ${JSON.stringify(ROUTES)},
+    routes: ${JSON.stringify(city.routes)},
     colors: ${JSON.stringify(MARKER_COLOR)},
-    domainColors: ${JSON.stringify(DOMAIN_COLOR)},
+    domainColors: ${JSON.stringify(domainColors)},
     legendTypes: ${JSON.stringify(Object.keys(legend))},
     legendColors: ${JSON.stringify(legend)},
     lang: ${JSON.stringify(lang)},
@@ -51,6 +59,12 @@ ${renderHeader(city, undefined, { current: lang })}
       center: city.center,
       zoom: city.zoom,
       stateKey: city.stateKey,
+    })},
+    taxonomy: ${JSON.stringify({
+      areaType: city.taxonomy.areaType,
+      subareaType: city.taxonomy.subareaType,
+      routeTypes: city.taxonomy.routeTypes,
+      labelKeys: city.taxonomy.labelKeys,
     })}
   }
 </script>

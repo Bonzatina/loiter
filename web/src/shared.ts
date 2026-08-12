@@ -45,15 +45,30 @@ function renderLangSwitcher(
  */
 function renderCitySwitcher(current: City | undefined, lang: Lang): string {
   const ui = UI_STRINGS[lang]
-  const items = CITIES.map(c => {
-    const isCurrent = c.slug === current?.slug
-    return `<li${isCurrent ? ' class="city-current"' : ''}>` +
-      `<a href="${homeUrl(c.slug, lang)}">${c.name[lang]}</a></li>`
+
+  // Grouped by kind: the rural wiki is a set of regions, not a city, and listing
+  // it as a sixth city would misdescribe it. The group heading only appears once
+  // there is more than one kind to separate.
+  const groups: [string, City[]][] = [
+    [ui.groupCities, CITIES.filter(c => c.kind === 'city')],
+    [ui.groupRural, CITIES.filter(c => c.kind === 'rural')],
+  ].filter(([, list]) => list.length > 0) as [string, City[]][]
+
+  const body = groups.map(([heading, list]) => {
+    const items = list.map(c => {
+      const isCurrent = c.slug === current?.slug
+      return `<li${isCurrent ? ' class="city-current"' : ''}>` +
+        `<a href="${homeUrl(c.slug, lang)}">${c.name[lang]}</a></li>`
+    }).join('')
+    return groups.length > 1
+      ? `<li class="city-group">${heading}</li>${items}`
+      : items
   }).join('')
+
   return `<details class="city-switcher">
     <summary title="${ui.chooseCity}">${current ? current.name[lang] : ui.allCities}</summary>
     <ul>
-      ${items}
+      ${body}
     </ul>
   </details>`
 }
