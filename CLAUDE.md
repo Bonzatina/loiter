@@ -242,15 +242,31 @@ City repos (branch `main`, `master` for rural):
 | `wiki_wroclav` | `Bonzatina/Loiter-wroclav` |
 | `wiki_rural_travel` | `Bonzatina/rural_travel` (branch `master`, not `main`) |
 
-**Image weight is the real constraint**, not the markdown: the city `web/assets/`
-folders total roughly 420 MB (Berlin alone ~190 MB), and because the images are
-committed, the city `.git` directories carry a comparable amount again (Berlin ~197 MB).
-Submodules keep that weight in the repos that already carry it instead of duplicating it
-into the aggregator, and `shallow`/`--depth 1` fetches the working files without the
-history — the reason to prefer submodules over copying or vendoring. The images stay
-where they are: moving them to object storage would mean editing every subproject, which
-this project does not do. If a host's disk or build-time limit is hit, that is the point
-to revisit — not before.
+**Image weight used to be the real constraint**, not the markdown. The `web/assets/`
+folders held 826 MB across the six subprojects — against 11 MB of markdown — because
+images were committed at whatever resolution the source handed out while CSS displays
+them at most 440 px wide. 948 of 1289 files were wider than twice that cap and accounted
+for 790 MB: almost the entire weight was pixels no reader ever sees, and one file was
+19.8 MB.
+
+`tools/shrink-images.mjs` fixed that — **826 MB → 192 MB**, and the heaviest asset is now
+under 1 MB. Run it after any ingest:
+
+```
+node tools/shrink-images.mjs wiki_dresden      # one subproject
+node tools/shrink-images.mjs --all --dry-run   # see what would change
+```
+
+It resizes JPEGs wider than 880 px, keeps the original whenever the re-encode would save
+less than 10%, refuses any output that is not a valid JPEG of the expected width, and
+touches nothing named `.png` (coats of arms, where JPEG would look worse). It needs only
+ffmpeg, and it is idempotent — re-running never re-compresses the same file twice. Each
+subproject's own `CLAUDE.md` now tells its ingest flow to run it.
+
+Note what this does and does not shrink: the working tree and therefore the deploy drop
+immediately, because submodules are fetched `--depth 1` and only the tip is downloaded.
+The repositories on GitHub do **not** shrink — the original blobs stay in history — and
+making them smaller would mean rewriting six histories, which is not worth it.
 
 ## Engine Invariants
 
