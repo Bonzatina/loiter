@@ -30,13 +30,17 @@ services:
     rootDir: web
     healthCheckPath: /
 
-    # Order matters. `npm ci` runs FIRST, while the disk still holds only the
-    # aggregator, because installing after the submodules were checked out failed
-    # with npm's "Exit handler never called" — its internal crash, and the one the
-    # subprojects' own blueprint blames on network side-calls at the end of
-    # install. --no-audit --no-fund is supposed to sidestep it and is already here,
-    # so something else tips it over; the difference from a city service is that
-    # this build has all five cities on disk (~430 MB) instead of one (77-192 MB).
+    # On "Exit handler never called!", which failed the first builds here: it was
+    # NOT disk pressure from the cities, and not the network side-calls the
+    # subprojects' blueprint blames. package-lock.json had been generated through
+    # an internal corporate npm proxy, so all 128 `resolved` URLs named a host that
+    # does not exist on the internet, and npm died opaquely trying to reach it. The
+    # lockfile now carries registry.npmjs.org URLs and web/.npmrc pins that
+    # registry so it cannot happen again.
+    #
+    # `npm ci` still runs first, before the submodules: nothing about the install
+    # depends on the content, and keeping it first means a dependency failure is
+    # never confused with a content one.
     #
     # --omit=dev: the runtime needs none of it. `npm start` is `tsx src/server.ts`,
     # tsx transpiles through its own esbuild, and nothing under src/ imports

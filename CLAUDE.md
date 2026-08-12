@@ -304,10 +304,17 @@ does not initialise on its own:
 if [ -n "$GIT_SUBMODULE_TOKEN" ]; then git config --global url."https://x-access-token:$GIT_SUBMODULE_TOKEN@github.com/".insteadOf "https://github.com/"; fi && npm ci --omit=dev --no-audit --no-fund && cd .. && git submodule update --init --depth 1 && echo "--- disk ---" && df -h . && echo "--- content ---" && du -sh wiki_* | sort -h
 ```
 
-Why in that order, and why `--omit=dev`, is explained in `render.yaml` — briefly: npm ci
-crashed with "Exit handler never called" when it ran after ~430 MB of city content was on
-disk, and the runtime needs none of the devDependencies (`tsx` transpiles through its own
-esbuild; nothing under `src/` imports `typescript` or `@types`).
+`--omit=dev` because the runtime needs none of it: `tsx` transpiles through its own
+esbuild, and nothing under `src/` imports `typescript` or `@types`. Install goes first
+because nothing about it depends on the content, which keeps a dependency failure from
+looking like a content one.
+
+**`web/.npmrc` pins `registry=https://registry.npmjs.org/`, and it must stay pinned.**
+This machine's global npm registry is an internal corporate proxy; installing through it
+writes that unreachable host into all 128 `resolved` URLs of `package-lock.json`, and
+`npm ci` on a build host then dies with npm's opaque *"Exit handler never called!"*. That
+cost three failed deploys. If the lockfile is ever regenerated, check it with
+`grep -c registry.npmjs.org package-lock.json` before committing.
 
 Environment: `NOTES_API_KEY`, `NOTES_TO`, `NOTES_SECRET`, `SITE_URL`.
 `GIT_SUBMODULE_TOKEN` turned out **not** to be needed — Render reaches the private city
