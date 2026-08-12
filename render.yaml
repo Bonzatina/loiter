@@ -1,4 +1,10 @@
-# Render Blueprint — deploy with "New > Blueprint" pointing at this repo.
+# Render service definition — kept as the written-down source of truth for the
+# build, the start command and the environment.
+#
+# NOTE: the family is deployed as manually created **Web Services**, not as
+# Blueprints, and a manually created service IGNORES this file. Treat it as the
+# reference: the same values have to be entered in the dashboard. CLAUDE.md lists
+# them field by field, including the build command as a single line.
 #
 # The Node app lives in web/; the city content is read at runtime from the
 # wiki_*/ submodules next to it. `rootDir` only sets the working directory, so

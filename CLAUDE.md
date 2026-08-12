@@ -280,6 +280,32 @@ run side by side.
 - **Who runs the server:** the user does. Do not start it to verify a content change.
   Start it only when asked, or when engine code under `web/src`, `web/scripts` or
   `web/styles` was changed on request.
+
+### Deploying
+
+The family is hosted on Render as **manually created Web Services**, not Blueprints. A
+manual service ignores `render.yaml`, so that file is the written-down reference and these
+values go into the dashboard by hand:
+
+| Field | Value |
+|---|---|
+| Language | Node |
+| Branch | `main` |
+| Root Directory | `web` |
+| Start Command | `npm start` |
+| Instance Type | Free |
+| Health Check Path | `/` |
+
+Build Command — one line, because the dashboard field is a single shell command. It steps
+out to the repository root for the submodules (Render does not initialise them) and back
+for the install:
+
+```
+cd .. && if [ -n "$GIT_SUBMODULE_TOKEN" ]; then git config --global url."https://x-access-token:$GIT_SUBMODULE_TOKEN@github.com/".insteadOf "https://github.com/"; fi && git submodule update --init --depth 1 && cd web && npm ci --no-audit --no-fund
+```
+
+Environment: `NOTES_API_KEY`, `NOTES_TO`, `NOTES_SECRET`, `SITE_URL`, and
+`GIT_SUBMODULE_TOKEN` only if the build fails without it — see the note in `render.yaml`.
 - **Dev-server note (Windows):** a leftover process holding the port keeps serving a
   stale wiki cache and will mislead smoke tests. Clear it with
   `Get-NetTCPConnection -LocalPort 4848 -State Listen | % { Stop-Process -Id $_.OwningProcess -Force }`.
