@@ -250,10 +250,27 @@ Two paths, same filesystem layout, so the code never branches:
   repo mounted as a **git submodule at exactly the same path**, declared
   `shallow = true` and fetched `--depth 1`. Submodule pointers are recorded in the parent
   repo only — the city repos are not modified, and their standalone deployments keep
-  working untouched. Publishing new content is `git submodule update --remote` in the
-  root, then a commit; this can be automated (nightly action, or a `repository_dispatch`
-  fired from each city repo on push). Pinning to a commit is the point: a build is
-  reproducible and a bad content state can be rolled back.
+  working untouched. Pinning to a commit is the point: a build is reproducible and a bad
+  content state can be rolled back.
+
+  **Publishing content is automatic.** `.github/workflows/bump-content.yml` runs nightly
+  (and on demand from the Actions tab) and moves every pointer to the tip of its branch,
+  committing only what actually moved. Content written in a subproject and pushed reaches
+  the combined site by morning; `git submodule update --remote` by hand still works for
+  anyone in a hurry.
+
+  The workflow does **not** check the submodules out. Only a SHA per city has to change,
+  and checking out to learn it would pull ~200 MB of photographs every night to write six
+  lines; `git ls-remote` answers the same question in six requests and
+  `git update-index --cacheinfo` writes the gitlink directly. Recording the branch tip
+  also means a pointer can never fall behind its branch, which is the state that makes a
+  `--depth 1` submodule fetch fail.
+
+  It needs the **`SUBMODULE_TOKEN`** repository secret: a fine-grained PAT with
+  `Contents: Read` on the six subprojects, because they are private and the default
+  `GITHUB_TOKEN` is scoped to this repository alone. Pushing back needs nothing beyond
+  `permissions: contents: write`. The commits are authored by `github-actions[bot]` — no
+  person wrote them.
 
   **`.gitmodules` holds plain `https://github.com/…` URLs**, because they have to resolve
   on a build host that knows nothing about this machine's `~/.ssh/config`. They still go

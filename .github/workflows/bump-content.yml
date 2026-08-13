@@ -1,0 +1,111 @@
+# Nightly: move the submodule pointers to the tip of each city's branch, so content
+# written in a subproject reaches the combined site without anyone doing it by hand.
+#
+# It does NOT check the submodules out. All that has to change is a 40-character SHA
+# per city, and `git submodule update --remote` would download every working tree to
+# learn it — roughly 200 MB of photographs, nightly, to write six lines. `git ls-remote`
+# answers the same question in six requests, and `git update-index --cacheinfo` writes
+# the gitlink straight into the index. The SHA is safe to record unverified because
+# ls-remote just reported it as the branch tip.
+#
+# Recording the tip also sidesteps the shallow-submodule trap: a pointer that has fallen
+# behind its branch can be unfetchable at --depth 1, and by construction this never
+# falls behind.
+#
+# The city repositories are private, so the default GITHUB_TOKEN cannot read them —
+# it is scoped to this repository alone. Create a fine-grained PAT with `Contents: Read`
+# on exactly the six subprojects and store it as the SUBMODULE_TOKEN secret. Pushing
+# back here needs nothing extra: that is what `permissions: contents: write` is for.
+
+name: Bump city content
+
+on:
+  schedule:
+    # 03:17 UTC. Off the hour on purpose — GitHub queues scheduled jobs, and everyone
+    # else asks for :00.
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bump-content
+  cancel-in-progress: false
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - name: Read the private city repositories
+        env:
+          TOKEN: ${{ secrets.SUBMODULE_TOKEN }}
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo "::error::SUBMODULE_TOKEN is not set — the city repositories are private and cannot be read without it"
+            exit 1
+          fi
+          git config --global url."https://x-access-token:${TOKEN}@github.com/".insteadOf "https://github.com/"
+
+      - name: Move pointers to each branch tip
+        id: bump
+        run: |
+          set -euo pipefail
+          moved=""
+          failed=0
+
+          while read -r key path; do
+            name="${key#submodule.}"; name="${name%.path}"
+            url=$(git config -f .gitmodules --get "submodule.${name}.url")
+            branch=$(git config -f .gitmodules --get "submodule.${name}.branch" || echo main)
+
+            tip=$(git ls-remote "$url" "refs/heads/${branch}" | cut -f1)
+            if [ -z "$tip" ]; then
+              echo "::error::${path}: no branch '${branch}' on ${url}"
+              failed=1
+              continue
+            fi
+
+            current=$(git rev-parse "HEAD:${path}")
+            if [ "$tip" = "$current" ]; then
+              echo "  ${path}: already at ${current:0:7}"
+              continue
+            fi
+
+            git update-index --add --replace --cacheinfo "160000,${tip},${path}"
+            echo "  ${path}: ${current:0:7} -> ${tip:0:7}"
+            moved="${moved}- ${path}: ${current:0:7} -> ${tip:0:7}"$'\n'
+          done < <(git config -f .gitmodules --get-regexp '^submodule\..*\.path$')
+
+          # A city that could not be reached must fail the run rather than let the rest
+          # through quietly: a half-updated set is worse than no update.
+          if [ "$failed" -ne 0 ]; then exit 1; fi
+
+          if [ -z "$moved" ]; then
+            echo "nothing moved" >> "$GITHUB_STEP_SUMMARY"
+            echo "moved=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          {
+            echo "moved<<EOF"
+            echo "$moved"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+          { echo "### Pointers moved"; echo; echo "$moved"; } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Commit and push
+        if: steps.bump.outputs.moved != ''
+        env:
+          MOVED: ${{ steps.bump.outputs.moved }}
+        run: |
+          set -euo pipefail
+          # The bot, not the author: nobody wrote this commit, and a machine's pointer
+          # bumps should not read as a person's work in the history.
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m "Bump city content" -m "$MOVED"
+          git push
