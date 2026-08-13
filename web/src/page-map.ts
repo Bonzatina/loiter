@@ -1,7 +1,7 @@
 import type { City } from './cities'
 import type { Lang } from './lang'
 import { toClientPages, type WikiPage } from './wiki'
-import { MARKER_COLOR, DOMAIN_COLOR, UI_STRINGS, legendFor } from './constants'
+import { MARKER_COLOR, DOMAIN_COLOR, UI_STRINGS, FAME_LEVELS, fameSliderEnabled, legendFor } from './constants'
 import { renderHeader, renderHtmlDocument } from './shared'
 
 export function renderPage(city: City, pages: WikiPage[], lang: Lang = 'ru'): string {
@@ -16,6 +16,14 @@ export function renderPage(city: City, pages: WikiPage[], lang: Lang = 'ru'): st
   const domainColors = Object.fromEntries(
     Object.entries(DOMAIN_COLOR).filter(([d]) => city.domains.includes(d)),
   )
+
+  // The slider appears only where the ratings exist. Nothing in the registry says
+  // which sites have them — the pages do, and rating them is gradual work, so the
+  // control shows up on its own as soon as a site has any rated place. The whole
+  // feature is still on trial, hence the kill switch.
+  const rated = pages.filter(p => p.type === 'place' && p.fame != null).length
+  const showFame = fameSliderEnabled() && rated > 0
+  const fameUi = ui.fame
 
   return renderHtmlDocument({
     lang,
@@ -33,6 +41,14 @@ ${renderHeader(city, undefined, { current: lang })}
     `<button class="legend-btn" data-type="${type}"><span class="dot" style="background:${color}"></span>${ui.legend[type] ?? type}</button>`
   ).join('')}
 </div>
+
+${showFame ? `<div class="fame-bar">
+  <label class="fame-label" for="fame-slider">${fameUi.legend}</label>
+  <input type="range" id="fame-slider" min="1" max="${FAME_LEVELS}" step="1" value="${FAME_LEVELS}"
+         aria-describedby="fame-hint">
+  <output id="fame-readout" for="fame-slider"></output>
+  <span id="fame-hint" class="fame-hint">${fameUi.hint}</span>
+</div>` : ''}
 
 <div id="map"></div>
 
@@ -65,7 +81,12 @@ ${renderHeader(city, undefined, { current: lang })}
       subareaType: city.taxonomy.subareaType,
       routeTypes: city.taxonomy.routeTypes,
       labelKeys: city.taxonomy.labelKeys,
-    })}
+    })},
+    fame: ${showFame ? JSON.stringify({
+      levels: FAME_LEVELS,
+      labelAll: fameUi.all,
+      labelUpTo: fameUi.upTo,
+    }) : 'null'}
   }
 </script>
 <script src="/scripts/map.js"></script>`,

@@ -1,6 +1,6 @@
 // Everything site-specific arrives in `city` and `taxonomy` — the client holds no
 // constant of its own, so this file is identical for every site and every geography.
-const { pages: allPages, routes, colors, domainColors, legendTypes, legendColors, lang, ui, city, taxonomy } = window.DATA
+const { pages: allPages, routes, colors, domainColors, legendTypes, legendColors, lang, ui, city, taxonomy, fame } = window.DATA
 
 function norm(s) { return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '') }
 const key = s => (s == null ? '' : norm(String(s)))
@@ -71,6 +71,33 @@ function isVisible(type, domain) {
   }
   return activeTypes.has(type)
 }
+
+// ── Fame filter ──────────────────────────────────────────────────────────────
+// `fame` rates how mass-touristic an object is: 1 is almost unknown, 5 is what every
+// guidebook opens with. It is seeded from how many Wikipedia language editions cover
+// the object and ranked WITHIN this site, so "obscure in Dresden" is judged against
+// Dresden and not against Europe.
+//
+// The slider sets the maximum: at 5 everything shows, at 1 only the quietest things
+// remain. Three rules keep it honest:
+//   · it applies to `place` only — a district or a region is not touristy-or-not;
+//   · an unrated page shows in the unfiltered view, and ONLY there. Letting it through
+//     at every position was the first design and it was wrong: Michalská veža went
+//     unrated, so the "nothing touristy" end of the slider was showing one of the five
+//     things every Bratislava guidebook opens with. "We do not know" cannot be
+//     presented as "we know it is quiet";
+//   · the filter therefore only ever shows what the data actually claims.
+let fameMax = fame ? fame.levels : Infinity
+
+function passesFame(p) {
+  if (fameMax === Infinity) return true
+  if (p.type !== 'place') return true
+  if (p.fame == null) return fameMax >= fame.levels
+  return p.fame <= fameMax
+}
+
+/** Everything a page must satisfy to be drawn and listed. */
+const shows = p => isVisible(p.type, p.domain) && passesFame(p)
 
 function placeRadius(zoom) {
   if (zoom <= 10) return 4.4
@@ -175,7 +202,7 @@ function syncMarkers() {
 
   const bounds = selectionActive && selectionRect ? selectionRect.getBounds() : null
   markerObjects.forEach(({ marker, page: p, baseColor }) => {
-    if (!isVisible(p.type, p.domain)) {
+    if (!shows(p)) {
       marker.setStyle({ opacity: 0, fillOpacity: 0 })
       return
     }
@@ -290,9 +317,9 @@ function update() {
   if (selectionActive || searchQuery) return
   const bounds = map.getBounds()
   const inBounds = mappable.filter(p =>
-    bounds.contains(L.latLng(p.coords[0], p.coords[1])) && isVisible(p.type, p.domain)
+    bounds.contains(L.latLng(p.coords[0], p.coords[1])) && shows(p)
   )
-  renderList([...inBounds, ...noCoords.filter(p => isVisible(p.type, p.domain))])
+  renderList([...inBounds, ...noCoords.filter(p => shows(p))])
 }
 map.on('moveend zoomend', update)
 
@@ -315,9 +342,9 @@ function applySelection(bounds) {
 
   syncMarkers()
   const visible = markerObjects
-    .filter(({ page: p }) => isVisible(p.type, p.domain) && bounds.contains(L.latLng(p.coords[0], p.coords[1])))
+    .filter(({ page: p }) => shows(p) && bounds.contains(L.latLng(p.coords[0], p.coords[1])))
     .map(({ page }) => page)
-  renderList([...visible, ...noCoords.filter(p => isVisible(p.type, p.domain))])
+  renderList([...visible, ...noCoords.filter(p => shows(p))])
   syncDrawBtn()
   saveState()
 }
@@ -560,7 +587,7 @@ document.querySelectorAll('.legend-btn').forEach(btn => {
     if (selectionActive) {
       const bounds = selectionRect.getBounds()
       const visible = markerObjects
-        .filter(({ page: p }) => isVisible(p.type, p.domain) && bounds.contains(L.latLng(p.coords[0], p.coords[1])))
+        .filter(({ page: p }) => shows(p) && bounds.contains(L.latLng(p.coords[0], p.coords[1])))
         .map(({ page }) => page)
       renderList(visible)
     } else {
@@ -569,6 +596,43 @@ document.querySelectorAll('.legend-btn').forEach(btn => {
     saveState()
   })
 })
+
+// ── Fame slider ───────────────────────────────────────────────────────────
+// Refreshes exactly the way a legend button does, including the box-selection case,
+// so the two filters compose instead of fighting.
+
+const fameInput = document.getElementById('fame-slider')
+const fameOut = document.getElementById('fame-readout')
+
+function refreshAfterFilterChange() {
+  syncMarkers()
+  if (selectionActive && selectionRect) {
+    const bounds = selectionRect.getBounds()
+    const visible = markerObjects
+      .filter(({ page: p }) => shows(p) && bounds.contains(L.latLng(p.coords[0], p.coords[1])))
+      .map(({ page }) => page)
+    renderList(visible)
+  } else {
+    update()
+  }
+}
+
+function syncFameReadout() {
+  if (!fameOut || !fame) return
+  const shownPlaces = allPages.filter(p => p.type === 'place' && passesFame(p)).length
+  const label = fameMax >= fame.levels ? fame.labelAll : fame.labelUpTo.replace('{n}', String(fameMax))
+  fameOut.textContent = `${label} · ${shownPlaces}`
+}
+
+if (fameInput && fame) {
+  fameInput.addEventListener('input', () => {
+    fameMax = Number(fameInput.value)
+    syncFameReadout()
+    refreshAfterFilterChange()
+    saveState()
+  })
+  syncFameReadout()
+}
 
 // ── State persistence (survives Back navigation) ──────────────────────────
 
@@ -580,6 +644,7 @@ function saveState() {
   const state = {
     lat: c.lat, lng: c.lng, zoom: map.getZoom(),
     activeTypes: [...activeTypes],
+    fameMax: fame ? fameMax : undefined,
     sel: selectionRect ? (() => {
       const b = selectionRect.getBounds()
       const sw = b.getSouthWest(), ne = b.getNorthEast()
@@ -601,6 +666,11 @@ function restoreState() {
       btn.classList.toggle('off', !activeTypes.has(btn.dataset.type))
     })
   }
+  if (fame && typeof state.fameMax === 'number') {
+    fameMax = Math.min(Math.max(state.fameMax, 1), fame.levels)
+    if (fameInput) fameInput.value = String(fameMax)
+    syncFameReadout()
+  }
   if (state.sel) {
     const { swLat, swLng, neLat, neLng } = state.sel
     const bounds = L.latLngBounds([swLat, swLng], [neLat, neLng])
@@ -616,6 +686,11 @@ function restoreState() {
 map.on('moveend zoomend', saveState)
 
 const wasRestored = restoreState()
+// Markers are created visible and hidden by syncMarkers, so a restored filter state
+// has to be pushed onto them — otherwise coming back with Back showed the correct
+// list beside a map with every marker on it. That was already true of the legend
+// filters before the fame slider existed.
+syncMarkers()
 
 // ── Search ────────────────────────────────────────────────────────────────
 
@@ -629,9 +704,9 @@ function applySearch(q) {
     if (selectionActive && selectionRect) {
       const bounds = selectionRect.getBounds()
       const visible = markerObjects
-        .filter(({ page: p }) => isVisible(p.type, p.domain) && bounds.contains(L.latLng(p.coords[0], p.coords[1])))
+        .filter(({ page: p }) => shows(p) && bounds.contains(L.latLng(p.coords[0], p.coords[1])))
         .map(({ page }) => page)
-      renderList([...visible, ...noCoords.filter(p => isVisible(p.type, p.domain))])
+      renderList([...visible, ...noCoords.filter(p => shows(p))])
     } else {
       update()
     }

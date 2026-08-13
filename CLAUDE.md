@@ -337,6 +337,28 @@ run side by side.
   Start it only when asked, or when engine code under `web/src`, `web/scripts` or
   `web/styles` was changed on request.
 
+### Feature flags — `FEATURES` in `web/src/constants.ts`
+
+Things that are built but not decided on live behind a flag there. The flag is the
+default; an environment variable of the same name overrides it, so a feature can be
+tried on the live site and switched off from the host's dashboard without a commit.
+
+| Flag | State | Override |
+|---|---|---|
+| `fameSlider` | **off** | `FAME_SLIDER=on` / `=off` |
+
+**`fameSlider`** rates every place 1–5 by how mass-touristic it is and lets the reader
+filter down to the quiet end. Seeded for Dresden (78 of 78 rated) and Bratislava (156 of
+157) by `tools/seed-fame.mjs`, from how many Wikipedia language editions cover an object,
+bucketed by share of that city's own maximum. Two known weaknesses, both worth knowing
+before switching it on: language coverage measures how widely something has been
+*written about*, not how many people go — a pilgrimage site scores like a coach stop; and
+an object the matcher cannot find is rated 1 on the evidence that nothing was written
+about it, which is right for a fairytale tree and wrong for St Martin's Cathedral.
+
+The `fame:` values stay in the pages' frontmatter with the flag off. They are inert:
+nothing reads them, no control is rendered, nothing is filtered.
+
 ### Deploying
 
 The family is hosted on Render as **manually created Web Services**, not Blueprints. A

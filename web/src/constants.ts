@@ -127,6 +127,14 @@ export const UI_STRINGS = {
     groupRural:          'Сельская местность',
     // Три формы для согласования с числительным — см. src/plural.ts.
     pages:               { one: 'страница', few: 'страницы', many: 'страниц' },
+    fame: {
+      // Шкала «насколько объект массово-туристический». Подписи словами, а не
+      // цифрами: цифра создавала бы впечатление точности, которой тут нет.
+      legend:    'Туристичность',
+      hint:      'Сдвиньте влево — останется только то, куда не возят автобусами.',
+      all:       'все объекты',
+      upTo:      'не туристичнее {n} из 5',
+    },
     geo: {
       findMe:  '⊕ Найти меня',
       hint:    'Определим, в каком из городов вы находитесь, и откроем карту вокруг вас.',
@@ -206,6 +214,12 @@ export const UI_STRINGS = {
     groupCities:         'Cities',
     groupRural:          'Countryside',
     pages:               { one: 'page', few: 'pages', many: 'pages' },
+    fame: {
+      legend:    'Touristiness',
+      hint:      'Drag left to keep only what the coaches never stop at.',
+      all:       'everything',
+      upTo:      'no more touristy than {n} of 5',
+    },
     geo: {
       findMe:  '⊕ Find me',
       hint:    'We will work out which of the cities you are in and open the map around you.',
@@ -249,6 +263,45 @@ export const UI_STRINGS = {
   },
 } as const
 export type UIStrings = typeof UI_STRINGS.ru
+
+/**
+ * Steps on the fame scale. Five, deliberately coarse: the underlying judgement is
+ * coarse, and a finer slider would only imply a precision that is not there.
+ */
+export const FAME_LEVELS = 5
+
+// ── Feature flags ────────────────────────────────────────────────────────────
+// Things that are built but not decided on. A flag here is the default; an
+// environment variable of the same name overrides it, so a feature can be tried on
+// the live site without a commit and switched off again from the host's dashboard.
+
+export const FEATURES = {
+  /**
+   * The touristiness slider: rates every place 1–5 by how mass-touristic it is and
+   * lets the reader filter down to the quiet end. Built and seeded for Dresden and
+   * Bratislava, currently OFF while it is judged.
+   *
+   * What it still gets wrong, for whoever turns it on: the rating is seeded from how
+   * many Wikipedia language editions cover an object, which measures how widely it has
+   * been written about rather than how many people go — a pilgrimage site scores like
+   * a coach stop. And an object the matcher cannot find is rated 1 on the evidence that
+   * nothing was written about it, which is usually right and occasionally puts a
+   * cathedral in the quietest bucket.
+   *
+   * The `fame:` values stay in the pages' frontmatter either way. With the flag off
+   * they are inert: nothing reads them, the control is not rendered, and no page is
+   * filtered.
+   */
+  fameSlider: false,
+} as const
+
+/** `FAME_SLIDER=on|off` overrides the flag above; unset falls back to it. */
+export function fameSliderEnabled(): boolean {
+  const env = (process.env.FAME_SLIDER ?? '').trim().toLowerCase()
+  if (env === 'on' || env === 'true' || env === '1') return true
+  if (env === 'off' || env === 'false' || env === '0') return false
+  return FEATURES.fameSlider
+}
 
 /** Contact shown on the about page and used as the note mailto: fallback. */
 export const PROJECT_EMAIL = 'loiter.traveler@gmail.com'

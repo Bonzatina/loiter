@@ -12,6 +12,10 @@ web/.env.*
 # Dependencies
 web/node_modules/
 
+# Wikidata responses cached by tools/seed-fame.mjs — one query's worth of items per
+# city, refetched with --refetch. Derived data with a long shelf life, not a source.
+.wikidata-cache/
+
 # OS noise
 .DS_Store
 Thumbs.db

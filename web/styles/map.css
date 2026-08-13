@@ -60,6 +60,36 @@
 h2 { font-size: 1rem; font-weight: 600; margin: 24px 0 10px; color: #444; text-transform: uppercase; letter-spacing: .05em; }
 h3 { font-size: 0.85rem; color: #888; margin: 16px 0 6px; text-transform: uppercase; letter-spacing: .05em; }
 
+/* ── Fame slider ────────────────────────────────────────────────────────────
+   Sits between the legend and the map: it is a filter like the legend buttons,
+   and belongs with them rather than in the header. */
+.fame-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  padding: 8px 24px 10px;
+  background: #f4f4f0;
+  border-bottom: 1px solid #e4e4de;
+  font-size: 0.8rem;
+}
+.fame-label { color: #555; font-weight: 600; }
+.fame-bar input[type="range"] {
+  width: 190px;
+  accent-color: #2e7d32;
+  cursor: pointer;
+}
+#fame-readout {
+  color: #2e7d32;
+  font-weight: 600;
+  min-width: 12ch;
+}
+.fame-hint { color: #999; }
+@media (max-width: 620px) {
+  .fame-bar { padding: 8px 14px 10px; }
+  .fame-hint { display: none; }
+}
+
 .pill-list { display: flex; flex-wrap: wrap; gap: 6px; }
 .pill {
   display: inline-block;

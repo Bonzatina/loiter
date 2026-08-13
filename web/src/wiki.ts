@@ -3,6 +3,7 @@ import fsSync from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
 import { contentRoot, type City } from './cities'
+import { FAME_LEVELS } from './constants'
 
 // ── Multi-root content loader ────────────────────────────────────────────────
 // One content root per site, each the `wiki/` directory of a subproject. The
@@ -32,6 +33,12 @@ export interface WikiPage {
   subarea?: string
   coords?: [number, number]
   domain?: string
+  /**
+   * How mass-touristic this object is: 1 almost unknown, 5 what every guidebook
+   * opens with. Ranked within its own site, seeded from Wikipedia language coverage.
+   * Absent on most pages — the fame slider treats unrated pages as always visible.
+   */
+  fame?: number
   tags?: string[]
 }
 
@@ -91,6 +98,9 @@ async function readDir(city: City, dir: string): Promise<WikiPage[]> {
       subarea: data[subareaField] as string | undefined,
       coords: readCoords(data.coords, `${city.slug}/${slug}`),
       domain: data.domain as string | undefined,
+      fame: typeof data.fame === 'number' && data.fame >= 1 && data.fame <= FAME_LEVELS
+        ? data.fame
+        : undefined,
       tags: data.tags as string[] | undefined,
     })
   }
