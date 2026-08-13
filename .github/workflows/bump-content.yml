@@ -37,7 +37,7 @@ jobs:
   bump:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           submodules: false
 
@@ -54,29 +54,57 @@ jobs:
       - name: Move pointers to each branch tip
         id: bump
         run: |
-          set -euo pipefail
+          # Deliberately not `set -e`: a failing ls-remote has to be reported with the
+          # repository it failed on and git's own message. The first version died on a
+          # bare "exit code 128" that said nothing about which city or why.
+          set -uo pipefail
           moved=""
           failed=0
+
+          # ls-remote runs from a scratch directory, OUTSIDE this repository. Checkout
+          # writes an Authorization header into the LOCAL git config, scoped to
+          # github.com, carrying the workflow's own token — which is valid only for this
+          # repository. Inside the working tree that header wins over the credentials in
+          # the rewritten URL, so every request for a city repo was authenticated as the
+          # wrong identity and refused. Outside it, only the global config applies, which
+          # is where the PAT rewrite lives.
+          probe="${RUNNER_TEMP}/ls-remote"
+          mkdir -p "$probe"
 
           while read -r key path; do
             name="${key#submodule.}"; name="${name%.path}"
             url=$(git config -f .gitmodules --get "submodule.${name}.url")
             branch=$(git config -f .gitmodules --get "submodule.${name}.branch" || echo main)
 
-            tip=$(git ls-remote "$url" "refs/heads/${branch}" | cut -f1)
+            if ! out=$(git -C "$probe" ls-remote "$url" "refs/heads/${branch}" 2>&1); then
+              echo "::error::${path}: cannot read ${url} — ${out}"
+              failed=1
+              continue
+            fi
+            tip=$(printf '%s\n' "$out" | head -1 | cut -f1)
             if [ -z "$tip" ]; then
               echo "::error::${path}: no branch '${branch}' on ${url}"
               failed=1
               continue
             fi
 
-            current=$(git rev-parse "HEAD:${path}")
+            # Without `set -e` an unreadable gitlink would leave `current` empty and look
+            # like a move, so it is checked rather than assumed.
+            if ! current=$(git rev-parse "HEAD:${path}" 2>&1); then
+              echo "::error::${path}: not a submodule in HEAD — ${current}"
+              failed=1
+              continue
+            fi
             if [ "$tip" = "$current" ]; then
               echo "  ${path}: already at ${current:0:7}"
               continue
             fi
 
-            git update-index --add --replace --cacheinfo "160000,${tip},${path}"
+            if ! git update-index --add --replace --cacheinfo "160000,${tip},${path}"; then
+              echo "::error::${path}: could not write the pointer"
+              failed=1
+              continue
+            fi
             echo "  ${path}: ${current:0:7} -> ${tip:0:7}"
             moved="${moved}- ${path}: ${current:0:7} -> ${tip:0:7}"$'\n'
           done < <(git config -f .gitmodules --get-regexp '^submodule\..*\.path$')
