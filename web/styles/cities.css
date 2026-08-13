@@ -53,6 +53,41 @@
 .find-me-status.warn { background: #fff8e1; border-left: 3px solid #f9a825; color: #6b5400; }
 .find-me-status a    { color: #1565c0; }
 
+/* ── Layout ─────────────────────────────────────────────────────────────────
+   One column by default. The map only exists above 980 px — see scripts/cities.js,
+   which does not even fetch Leaflet below that — so the two-column rule and the map
+   height live behind the same breakpoint. */
+.cities-layout { display: grid; gap: 26px; }
+.cities-map-wrap[hidden] { display: none; }
+
+#cities-map {
+  height: 60vh;
+  min-height: 420px;
+  border: 1px solid #e4e4df;
+  border-radius: 6px;
+  background: #eceae4;
+}
+.cities-map-hint {
+  font-size: 0.78rem;
+  color: #999;
+  margin: 8px 2px 0;
+}
+/* The pins are the only thing to point at, so make that obvious. */
+#cities-map .leaflet-interactive { cursor: pointer; }
+
+@media (min-width: 980px) {
+  .cities-body { max-width: 1180px; }
+  .cities-layout { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
+  .cities-map-wrap { position: sticky; top: 22px; }
+  .city-grid { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
+}
+
+/* Lit from the map: hovering a pin marks its card, and the other way round. */
+.city-card-lit {
+  border-color: #2e7d32;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.10);
+}
+
 /* Group headings: cities and the countryside are different kinds of thing, and
    the picker says so rather than listing six equal cards. */
 .city-group-heading {
@@ -120,7 +155,35 @@
   white-space: nowrap;
 }
 
-@media (max-width: 480px) {
-  .cities-body { padding: 32px 16px; }
-  .city-grid { grid-template-columns: 1fr; }
+/* ── Narrow screens ─────────────────────────────────────────────────────────
+   Ten cards with a 3:2 photo each ran to about 2900 px on a 375 px screen — five
+   screenfuls to reach the last one. Below 600 px a card becomes a row with a small
+   square thumbnail, which brings the whole picker to roughly one screen and a half.
+   Nothing is dropped: the same photo, name and count, just not stacked. */
+@media (max-width: 600px) {
+  .cities-body { padding: 28px 16px; }
+  .city-grid { grid-template-columns: 1fr; gap: 8px; }
+
+  .city-card { flex-direction: row; align-items: stretch; }
+  .city-card:hover { transform: none; }
+
+  .city-card-image {
+    flex: 0 0 76px;
+    width: 76px;
+    height: 76px;
+    aspect-ratio: auto;
+  }
+
+  .city-card-body {
+    flex: 1;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 3px;
+    padding: 8px 12px;
+  }
+  .city-card-name { font-size: 0.98rem; line-height: 1.25; }
+  .city-card-count { font-size: 0.74rem; }
+
+  .city-group-heading { margin: 20px 0 8px; }
 }

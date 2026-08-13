@@ -76,6 +76,34 @@ rather than left to luck.
 `kind: 'city' | 'rural'` is separate from the taxonomy and only affects presentation: the
 picker and the switcher group by it so the rural wiki is not offered as a sixth city.
 
+### One subproject, several sites — `areas`
+
+The rural wiki is served as **five sites**, not one. It spans 377 km east to west and
+257 north to south; at the single starting view it once had, 413 of its 772 mapped
+objects were off screen, Balaton (113 objects) and Burgenland (80) among them. A registry
+entry may therefore name the area folders it covers, and the loader serves only those:
+
+| Site | Areas |
+|---|---|
+| Излучина Дуная | dunakanyar, pilis, gerecse, gödöllői-dombság, velence, del-duna |
+| Малые Карпаты и Бургенланд | podunajsko, záhorie, male-karpaty, považie, ponitrie, burgenland, römerland |
+| Балатон и Задунавье | balaton, bakony, kisalföld |
+| Спиш и Словацкое Рудогорье | stiavnicke-vrchy, banskobystricky, novohrad, gemer, spiš, šariš, zemplín, abaujtorna |
+| Большая равнина | kiskunság, tiszavidék, hortobágy, mátra, bükk |
+
+The repository is untouched by this: one `dir`, one submodule pointer, one standalone app.
+Only the presentation is split. `concepts/` and `people/` are cross-region and shared by
+all five; the area overview pages in `regions/` follow their cluster. Route lines follow
+whichever site serves their page — otherwise all five drew all ten, putting the Danube
+ferries on the Balaton map.
+
+**The clusters are landscapes, not countries**, and the names avoid naming a state.
+«Верхняя Венгрия» was the first name for the fifth and is not usable: in present-day use
+it carries an irredentist edge, and it misdirects a traveller by naming a country that has
+not existed for a century. The obvious replacement, «Средняя и Восточная Словакия», is
+factually wrong — Hollókő, a UNESCO village, and the Drégely castle sit inside that
+cluster on the Hungarian side. Check the coordinates before renaming it again.
+
 ## The City Registry — `web/src/cities.ts`
 
 One entry per city, and it is the **only** place a city name, coordinate or port-like
@@ -87,6 +115,7 @@ constant may appear. Everything the old per-city engines hard-coded becomes a fi
 | `dir` | `wiki_berlin` | `WIKI_ROOT` in `wiki.ts`, the `/assets` static mount |
 | `kind` | `city` / `rural` | — (new: how the picker and switcher group) |
 | `taxonomy` | `CITY_TAXONOMY` | the folder names and field names in `wiki.ts`, `map.js` |
+| `areas` | `['balaton','bakony',…]` | — (new: serve only part of a subproject) |
 | `routes` | `NO_ROUTES` / `RURAL_ROUTES` | the `ROUTES` array in `constants.ts` |
 | `brand` | `Loiter: Berlin` | the literal in `page-map.ts`, `page-detail.ts`, `shared.ts` |
 | `name.ru` / `name.en` | `Берлин` / `Berlin` | city switcher and picker labels |
@@ -144,6 +173,15 @@ City slugs namespace everything, because **page slugs collide across cities**:
 `Hauptbahnhof` and `Kunstgewerbemuseum` each exist in both Berlin and Dresden today, and
 the naming conventions guarantee more as the wikis grow. A flat `/:slug` route would
 silently serve the wrong city's page. `npm run check` prints the current collision list.
+
+The picker at `/` pairs the cards with a map of the whole family on screens from 980 px
+up: pins only, names in the cards, because at any scale that fits Berlin and Balaton
+together Budapest and the Danube Bend are 49 px apart and no labelled card could sit at
+both. `scripts/cities.js` fetches Leaflet **only** once it knows the viewport is wide
+enough, so a phone downloads neither the library nor a tile — below 600 px the cards
+collapse to rows with a small thumbnail, which takes the picker from about five screenfuls
+to one and a half. Without JavaScript the map never appears and the cards remain a
+complete way to choose.
 
 ```
 /                        → city picker (landing) — cards with name, page count, photo

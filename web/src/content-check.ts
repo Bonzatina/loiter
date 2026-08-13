@@ -73,25 +73,34 @@ async function main(): Promise<void> {
     }
   }
 
-  // ── Cross-city collisions ──────────────────────────────────────────────────
+  // ── Cross-subproject collisions ────────────────────────────────────────────
   // Not a problem — it is the justification for the /{city}/{slug} namespace.
   // Reported so the count stays visible if anyone proposes flattening the routes.
-  const owners = new Map<string, string[]>()
+  //
+  // Keyed by SUBPROJECT, not by site. Five sites serve the rural wiki, and its
+  // cross-region concepts and people appear in all of them by design; that is one
+  // page reachable at five URLs, not a name clash, and counting it as one buried the
+  // real collisions under fifty-odd false ones.
+  const dirOf = new Map(CITIES.map(c => [c.slug, c.dir]))
+  const owners = new Map<string, Set<string>>()
   for (const [slug, pages] of loaded) {
+    const dir = dirOf.get(slug)!
     for (const p of pages) {
       const key = p.slug.toLowerCase()
-      const list = owners.get(key) ?? []
-      if (!list.includes(slug)) list.push(slug)
-      owners.set(key, list)
+      const set = owners.get(key) ?? new Set<string>()
+      set.add(dir)
+      owners.set(key, set)
     }
   }
-  const shared = [...owners.entries()].filter(([, cities]) => cities.length > 1)
+  const shared = [...owners.entries()]
+    .filter(([, dirs]) => dirs.size > 1)
+    .map(([slug, dirs]) => [slug, [...dirs]] as [string, string[]])
 
   console.log('\n── Cross-city slug collisions ' + '─'.repeat(39))
   if (shared.length === 0) {
     console.log('  none')
   } else {
-    console.log(`  ${shared.length} slug(s) used by more than one city — city namespace required:`)
+    console.log(`  ${shared.length} slug(s) used by more than one subproject — city namespace required:`)
     for (const [slug, cities] of shared.sort()) {
       console.log(`    ${pad(slug, 34)} ${cities.join(', ')}`)
     }
@@ -99,7 +108,7 @@ async function main(): Promise<void> {
 
   const total = [...loaded.values()].reduce((n, p) => n + p.length, 0)
   console.log('\n── Total ' + '─'.repeat(60))
-  console.log(`  ${total} pages across ${CITIES.length} cities`)
+  console.log(`  ${total} pages across ${CITIES.length} sites`)
   console.log(problems === 0
     ? '  no problems found\n'
     : `  ${problems} problem(s) found\n`)

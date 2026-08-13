@@ -19,7 +19,7 @@ export function renderCitiesPage(cards: CityCard[], lang: Lang = 'ru'): string {
   const ui = UI_STRINGS[lang]
 
   const card = ({ city, pages }: CityCard) => `
-    <a class="city-card" href="${homeUrl(city.slug, lang)}">
+    <a class="city-card" href="${homeUrl(city.slug, lang)}" data-site="${city.slug}">
       <span class="city-card-image">
         <img src="${assetsPrefix(city.slug)}/${city.cardImage}" alt="${city.name[lang]}" loading="lazy">
       </span>
@@ -46,11 +46,12 @@ export function renderCitiesPage(cards: CityCard[], lang: Lang = 'ru'): string {
     ? 'Interactive encyclopaedias for exploring cities on foot: architecture, history, museums, parks, culture, and specific places worth seeing with your own eyes.'
     : 'Интерактивные энциклопедии для исследования городов пешком: архитектура, история, музеи, парки, культура и конкретные места, которые стоит увидеть своими глазами.'
 
-  // Only what the client needs to pick a city: name, where its centre is and
-  // where to go. No page data — the picker never loads a city's content.
+  // Only what the client needs to place and pick a site: name, where its centre is,
+  // what kind it is and where to go. No page data — the picker never loads content.
   const geoCities = cards.map(({ city }) => ({
     slug: city.slug,
     name: city.name[lang],
+    kind: city.kind,
     center: city.center,
     url: homeUrl(city.slug, lang),
   }))
@@ -58,6 +59,9 @@ export function renderCitiesPage(cards: CityCard[], lang: Lang = 'ru'): string {
   return renderHtmlDocument({
     lang,
     title: 'Loiter',
+    // Leaflet is NOT linked here. The picker map is a wide-screen affordance, and
+    // scripts/cities.js injects the library only once it knows the viewport is wide
+    // enough to show one — a phone downloads neither the library nor a single tile.
     styles: ['/styles/shared.css', '/styles/cities.css'],
     body: `${renderHeader(undefined, undefined, { current: lang })}
 <div class="cities-body">
@@ -70,7 +74,16 @@ export function renderCitiesPage(cards: CityCard[], lang: Lang = 'ru'): string {
     <p id="find-me-status" class="find-me-status" hidden></p>
   </div>
 
-  ${items}
+  <div class="cities-layout">
+    <!-- Revealed by the script: without JavaScript there is no map, and the cards
+         alone must remain a complete way to choose. -->
+    <div class="cities-map-wrap" hidden>
+      <div id="cities-map"></div>
+      <p class="cities-map-hint">${ui.pickerMapHint}</p>
+    </div>
+    <div class="cities-list">${items}
+    </div>
+  </div>
 </div>
 
 <script>

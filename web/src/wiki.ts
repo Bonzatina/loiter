@@ -107,14 +107,31 @@ async function readDir(city: City, dir: string): Promise<WikiPage[]> {
   return pages
 }
 
+/**
+ * Case- and diacritic-insensitive key for an area name. `Hortobágy` the region page,
+ * `hortobágy` the folder and `hortobagy` in a frontmatter field all have to agree.
+ */
+const areaKey = (s: string): string =>
+  s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+
 async function loadCity(city: City): Promise<WikiPage[]> {
   const root = contentRoot(city)
   const { flatDirs, ignoreDirs, typeDirs } = city.taxonomy
 
-  // Cross-area directories.
+  // A site may cover only part of its subproject — see `areas` in the registry.
+  const wanted = city.areas ? new Set(city.areas.map(areaKey)) : null
+
+  // Cross-area directories. Their pages are shared by every site out of this
+  // subproject, EXCEPT the area overview pages themselves, which belong to whichever
+  // site covers them. An overview page names the area it stands for in its own `area`
+  // field when its filename differs from the folder slug; otherwise its slug is the
+  // name.
   const flatPages = (await Promise.all(
     flatDirs.map(d => readDir(city, path.join(root, d))),
-  )).flat()
+  )).flat().filter(p => {
+    if (!wanted || p.type !== city.taxonomy.areaType) return true
+    return wanted.has(areaKey(p.area ?? p.slug))
+  })
 
   // Discover area directories: any top-level dir that is not a flat one.
   let topEntries: string[]
@@ -135,6 +152,7 @@ async function loadCity(city: City): Promise<WikiPage[]> {
   const areaDirs: string[] = []
   for (const entry of topEntries) {
     if (skip.has(entry)) continue
+    if (wanted && !wanted.has(areaKey(entry))) continue
     const full = path.join(root, entry)
     const stat = await fs.stat(full).catch(() => null)
     if (stat?.isDirectory()) areaDirs.push(full)

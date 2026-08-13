@@ -51,6 +51,18 @@ export interface City {
    * loader normalises both into `area`/`subarea`, so nothing downstream branches.
    */
   taxonomy: Taxonomy
+  /**
+   * Optional: serve only these top-level area folders out of `dir`.
+   *
+   * Several sites may share one subproject. The rural wiki spans 377 km east to west,
+   * far more than one map can show — at its old single starting view 413 of its 772
+   * mapped objects were off screen, Balaton and Burgenland among them — so it is
+   * presented as five landscape clusters, each with its own map, while remaining one
+   * repository with one history and one standalone app.
+   *
+   * Omit to serve every area in `dir`, which is what each city does.
+   */
+  areas?: string[]
   /** Railway and ferry lines drawn on the map. Empty for every city. */
   routes: RouteLine[]
   /** Brand shown in the header, <title> and note-mail subject. */
@@ -169,30 +181,124 @@ export const CITIES: City[] = [
     cardImage: 'rynek.jpg',
     about: wroclawAbout,
   },
+  // ── The rural wiki, presented as five landscapes ───────────────────────────
+  //
+  // One repository, one history, one standalone app — five sites here. It spans
+  // 377 km east to west and 257 north to south, and a single map could not show it:
+  // at the old starting view 413 of its 772 mapped objects were off screen, Balaton
+  // (113) and Burgenland (80) among them. Splitting the presentation gives each
+  // landscape a map that actually frames it.
+  //
+  // The clusters are landscapes, not countries. Burgenland belongs with Bratislava's
+  // hinterland — Eisenstadt is 40 km away and was Kismarton in the same county — and
+  // splitting by modern border would contradict the subproject's own premise, which
+  // is cultural continuity across them.
+  //
+  // `concepts/` and `people/` are cross-region and shared by all five: a note on
+  // timber framing belongs to every landscape it appears in.
+  //
+  // Centres and zooms are computed from each cluster's own content, not guessed.
   {
-    // Not a city: 31 rural regions across Hungary, Slovakia and Burgenland. The
-    // slug is a new URL for the combined site only — the subproject keeps its own
-    // name, folder and repository, and renaming it is a separate open question.
-    slug: 'rural',
+    slug: 'dunakanyar',
     dir: 'wiki_rural_travel',
     kind: 'rural',
     taxonomy: RURAL_TAXONOMY,
     routes: RURAL_ROUTES,
-    brand: 'Loiter: Rural Travel',
-    // Left untranslated on purpose: the project's naming is still undecided, and
-    // inventing a Russian label here would pre-empt that decision.
-    name: { ru: 'Rural Travel', en: 'Rural Travel' },
-    center: [47.7800, 18.9500],
-    zoom: 10,
-    stateKey: 'rural_map_state_v1',
+    areas: ['dunakanyar', 'pilis', 'gerecse', 'gödöllői-dombság', 'velence', 'del-duna'],
+    brand: 'Loiter: Излучина Дуная',
+    name: { ru: 'Излучина Дуная', en: 'Danube Bend' },
+    center: [47.3325, 18.7856],
+    zoom: 9,
+    stateKey: 'dunakanyar_map_state_v1',
     timezone: 'Europe/Budapest',
     districtLabel: 'Регион',
-    // Museums (135 pages) and thermal baths (12) were invisible on the rural map
-    // before: its own engine gave them no colour, so they were drawn as ordinary
-    // olive sights while the city maps showed them purple and orange. `transport`
-    // covers the railway and ferry page types too.
+    // Museums and thermal baths were invisible on the rural map before: its own
+    // engine gave them no colour, so they drew as ordinary olive sights while the
+    // city maps showed them purple and orange. `transport` covers the railway and
+    // ferry page types too.
     domains: ['museums', 'nature', 'thermal', 'lookout', 'transport'],
-    cardImage: 'esztergomi-var.jpg',
+    cardImage: 'fellegvar-visegrad.jpg',
+    about: ruralAbout,
+  },
+  {
+    slug: 'male-karpaty',
+    dir: 'wiki_rural_travel',
+    kind: 'rural',
+    taxonomy: RURAL_TAXONOMY,
+    routes: RURAL_ROUTES,
+    areas: ['podunajsko', 'záhorie', 'male-karpaty', 'považie', 'ponitrie', 'burgenland', 'römerland'],
+    brand: 'Loiter: Малые Карпаты и Бургенланд',
+    name: { ru: 'Малые Карпаты и Бургенланд', en: 'Little Carpathians & Burgenland' },
+    center: [47.9613, 17.5159],
+    zoom: 8,
+    stateKey: 'male_karpaty_map_state_v1',
+    timezone: 'Europe/Bratislava',
+    districtLabel: 'Регион',
+    domains: ['museums', 'nature', 'thermal', 'lookout', 'transport'],
+    cardImage: 'cerveny-kamen-castle.jpg',
+    about: ruralAbout,
+  },
+  {
+    slug: 'balaton',
+    dir: 'wiki_rural_travel',
+    kind: 'rural',
+    taxonomy: RURAL_TAXONOMY,
+    routes: RURAL_ROUTES,
+    areas: ['balaton', 'bakony', 'kisalföld'],
+    brand: 'Loiter: Балатон и Задунавье',
+    name: { ru: 'Балатон и Задунавье', en: 'Balaton & Transdanubia' },
+    center: [47.1535, 17.4863],
+    zoom: 8,
+    stateKey: 'balaton_map_state_v1',
+    timezone: 'Europe/Budapest',
+    districtLabel: 'Регион',
+    domains: ['museums', 'nature', 'thermal', 'lookout', 'transport'],
+    cardImage: 'egry-jozsef-kilato-badacsony.jpg',
+    about: ruralAbout,
+  },
+  {
+    // Named for the landscapes, not for a state. «Верхняя Венгрия» / Felvidék is
+    // historically exact and unusable here: in present-day usage it carries an
+    // irredentist edge that would read badly to a Slovak reader, and it also
+    // misdirects a traveller by naming a country that has not existed for a century
+    // for territory that is now in another one. «Средняя и Восточная Словакия» was
+    // the obvious replacement and is wrong too — Hollókő, a UNESCO village, and the
+    // Drégely castle sit inside this cluster on the Hungarian side of the border.
+    // «Рудогорье» is qualified as Slovak because the bare name would collide with the
+    // Erzgebirge, which this family also covers, next to Dresden.
+    slug: 'spis-rudohorie',
+    dir: 'wiki_rural_travel',
+    kind: 'rural',
+    taxonomy: RURAL_TAXONOMY,
+    routes: RURAL_ROUTES,
+    areas: ['stiavnicke-vrchy', 'banskobystricky', 'novohrad', 'gemer', 'spiš', 'šariš', 'zemplín', 'abaujtorna'],
+    brand: 'Loiter: Спиш и Словацкое Рудогорье',
+    name: { ru: 'Спиш и Словацкое Рудогорье', en: 'Spiš & the Slovak Ore Mountains' },
+    center: [48.6741, 20.2406],
+    zoom: 8,
+    stateKey: 'spis_rudohorie_map_state_v1',
+    timezone: 'Europe/Bratislava',
+    districtLabel: 'Регион',
+    domains: ['museums', 'nature', 'thermal', 'lookout', 'transport'],
+    cardImage: 'mestsky-hrad-banska-bystrica.jpg',
+    about: ruralAbout,
+  },
+  {
+    slug: 'alfold',
+    dir: 'wiki_rural_travel',
+    kind: 'rural',
+    taxonomy: RURAL_TAXONOMY,
+    routes: RURAL_ROUTES,
+    areas: ['kiskunság', 'tiszavidék', 'hortobágy', 'mátra', 'bükk'],
+    brand: 'Loiter: Большая равнина',
+    name: { ru: 'Большая равнина', en: 'Great Plain' },
+    center: [47.6474, 20.1814],
+    zoom: 8,
+    stateKey: 'alfold_map_state_v1',
+    timezone: 'Europe/Budapest',
+    districtLabel: 'Регион',
+    domains: ['museums', 'nature', 'thermal', 'lookout', 'transport'],
+    cardImage: 'cifrapalota-kecskemet.jpg',
     about: ruralAbout,
   },
 ]

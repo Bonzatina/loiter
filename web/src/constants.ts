@@ -125,6 +125,7 @@ export const UI_STRINGS = {
     chooseCity:          'Выберите проект',
     groupCities:         'Города',
     groupRural:          'Сельская местность',
+    pickerMapHint:       'Наведите на карточку — увидите, где это.',
     // Три формы для согласования с числительным — см. src/plural.ts.
     pages:               { one: 'страница', few: 'страницы', many: 'страниц' },
     fame: {
@@ -213,6 +214,7 @@ export const UI_STRINGS = {
     chooseCity:          'Choose a project',
     groupCities:         'Cities',
     groupRural:          'Countryside',
+    pickerMapHint:       'Hover a card to see where it is.',
     pages:               { one: 'page', few: 'pages', many: 'pages' },
     fame: {
       legend:    'Touristiness',

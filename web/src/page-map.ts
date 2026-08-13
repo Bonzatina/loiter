@@ -21,6 +21,17 @@ export function renderPage(city: City, pages: WikiPage[], lang: Lang = 'ru'): st
   // which sites have them — the pages do, and rating them is gradual work, so the
   // control shows up on its own as soon as a site has any rated place. The whole
   // feature is still on trial, hence the kill switch.
+  // Route lines belong to whichever site serves their page. Without this every one of
+  // the five rural sites drew all ten polylines, putting the Danube ferries on the
+  // Balaton map.
+  //
+  // Matched against every page, not only the railway and ferry ones: the Tihany–Szántód
+  // ferry is typed `place` in the wiki, and keying on type would have silently dropped
+  // its line from the map it belongs to. Whether a page is typed as transport is a
+  // content question; whose route it is, is not.
+  const servedSlugs = new Set(pages.map(p => p.slug))
+  const routes = city.routes.filter(r => servedSlugs.has(r.slug))
+
   const rated = pages.filter(p => p.type === 'place' && p.fame != null).length
   const showFame = fameSliderEnabled() && rated > 0
   const fameUi = ui.fame
@@ -63,7 +74,7 @@ ${showFame ? `<div class="fame-bar">
 <script>
   window.DATA = {
     pages: ${JSON.stringify(toClientPages(pages))},
-    routes: ${JSON.stringify(city.routes)},
+    routes: ${JSON.stringify(routes)},
     colors: ${JSON.stringify(MARKER_COLOR)},
     domainColors: ${JSON.stringify(domainColors)},
     legendTypes: ${JSON.stringify(Object.keys(legend))},

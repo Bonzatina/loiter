@@ -107,6 +107,84 @@ function onError(err) {
   idle()
 }
 
+// ── Picker map ───────────────────────────────────────────────────────────────
+// A map of the family, so a reader can see that Dresden sits an hour from Berlin
+// and the Great Plain is a long way east of Balaton — which a grid of cards cannot
+// say. Cards carry the names; the map carries only pins, because at any scale that
+// fits Berlin and Balaton together, Budapest and the Danube Bend are 49 px apart and
+// no labelled card could be placed at both.
+//
+// Wide screens only, and the library is fetched only once that is known. On a phone
+// the picker is already five screens of scrolling; a map would make it six, and the
+// question it answers there — "what is near me" — is what the Find me button is for.
+
+const WIDE = '(min-width: 980px)'
+const LEAFLET = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet'
+
+function loadLeaflet() {
+  return new Promise((resolve, reject) => {
+    if (window.L) { resolve(); return }
+    const css = document.createElement('link')
+    css.rel = 'stylesheet'
+    css.href = `${LEAFLET}.css`
+    document.head.appendChild(css)
+    const js = document.createElement('script')
+    js.src = `${LEAFLET}.js`
+    js.onload = () => resolve()
+    js.onerror = () => reject(new Error('leaflet failed to load'))
+    document.head.appendChild(js)
+  })
+}
+
+function initPickerMap() {
+  const wrap = document.querySelector('.cities-map-wrap')
+  const host = document.getElementById('cities-map')
+  if (!wrap || !host || !cities.length) return
+  wrap.hidden = false
+
+  // Not a map to explore — a picture to point at. Panning and zooming are off so the
+  // page scrolls normally and the pins stay where the eye left them.
+  const map = L.map(host, {
+    dragging: false, scrollWheelZoom: false, doubleClickZoom: false,
+    touchZoom: false, boxZoom: false, keyboard: false, zoomControl: false,
+  })
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  }).addTo(map)
+  map.fitBounds(cities.map(c => c.center), { padding: [38, 38] })
+
+  const cardOf = slug => document.querySelector(`.city-card[data-site="${slug}"]`)
+  const base = c => (c.kind === 'rural' ? '#a0b930' : '#2e7d32')
+
+  for (const c of cities) {
+    const marker = L.circleMarker(c.center, {
+      radius: 7, weight: 2, color: '#fff',
+      fillColor: base(c), fillOpacity: 1,
+    }).addTo(map).bindTooltip(c.name, { direction: 'top', offset: [0, -6] })
+
+    const on = () => { marker.setStyle({ radius: 11, weight: 3 }); marker.bringToFront() }
+    const off = () => marker.setStyle({ radius: 7, weight: 2 })
+
+    marker.on('click', () => { location.href = c.url })
+    marker.on('mouseover', () => { on(); cardOf(c.slug)?.classList.add('city-card-lit') })
+    marker.on('mouseout', () => { off(); cardOf(c.slug)?.classList.remove('city-card-lit') })
+
+    const card = cardOf(c.slug)
+    if (card) {
+      card.addEventListener('mouseenter', on)
+      card.addEventListener('mouseleave', off)
+      card.addEventListener('focus', on)
+      card.addEventListener('blur', off)
+    }
+  }
+}
+
+if (window.matchMedia(WIDE).matches) {
+  loadLeaflet().then(initPickerMap).catch(() => {
+    // Offline or the CDN is unreachable: the cards are a complete picker on their own.
+  })
+}
+
 if (btn && navigator.geolocation) {
   // Revealed only now: without JavaScript or geolocation the button would be dead,
   // so it ships hidden and is never shown to a browser that cannot use it.
