@@ -60,11 +60,21 @@ export function renderAboutPage(city: City | undefined, lang: Lang = 'ru'): stri
     sourcesElsewhere: isEn
       ? 'Sources are listed per city — each city\'s about page carries its own list.'
       : 'Источники перечислены по городам — у каждого города свой список на его странице «О проекте».',
+    // A city that is in the registry but has not been ingested yet. Better to say
+    // so than to print an empty list under a heading promising sources.
+    sourcesNone: isEn
+      ? 'This city has only just been started — nothing has been ingested yet, so there is nothing to list.'
+      : 'Город только начат — источники ещё не разбирались, перечислять пока нечего.',
   }
 
   // ── The part that differs between the two contexts ────────────────────────
   const tail = city
-    ? `
+    ? city.about.sources.length === 0
+      ? `
+  <h2>${t.sourcesH2}</h2>
+
+  <p>${t.sourcesNone}</p>`
+      : `
   <h2>${t.sourcesH2}</h2>
 
   <p>${t.sourceIntro}</p>

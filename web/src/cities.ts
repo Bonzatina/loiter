@@ -5,6 +5,7 @@ import { bratislavaAbout } from './about/bratislava'
 import { budapestAbout } from './about/budapest'
 import { dresdenAbout } from './about/dresden'
 import { wroclawAbout } from './about/wroclaw'
+import { viennaAbout } from './about/vienna'
 import { ruralAbout } from './about/rural'
 import type { AboutData } from './about/types'
 import type { Lang, Localized } from './lang'
@@ -180,6 +181,25 @@ export const CITIES: City[] = [
     domains: ['museums', 'nature', 'lookout'],
     cardImage: 'rynek.jpg',
     about: wroclawAbout,
+  },
+  // Slug ≠ dir again, as with Wrocław: the folder was created as `wiki_viena`
+  // and the repository carries that spelling, while readers get /vienna.
+  {
+    slug: 'vienna',
+    dir: 'wiki_viena',
+    kind: 'city',
+    taxonomy: CITY_TAXONOMY,
+    routes: NO_ROUTES,
+    brand: 'Loiter: Wien',
+    name: { ru: 'Вена', en: 'Vienna' },
+    center: [48.2082, 16.3738],
+    zoom: 12,
+    stateKey: 'vienna_map_state_v1',
+    timezone: 'Europe/Vienna',
+    districtLabel: 'Район',
+    domains: ['museums', 'nature', 'lookout'],
+    cardImage: 'stephansdom.jpg',
+    about: viennaAbout,
   },
   // ── The rural wiki, presented as five landscapes ───────────────────────────
   //
