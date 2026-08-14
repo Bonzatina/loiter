@@ -44,9 +44,6 @@ export function renderAboutPage(city: City | undefined, lang: Lang = 'ru'): stri
     note:      isEn
       ? 'A language model (LLM) is used to process and structure material. Although all information is drawn from open sources, errors of interpretation or inaccuracies are possible. If you notice a mistake — it is probably there.'
       : 'При обработке и структурировании материалов используется языковая модель (LLM). Несмотря на то что все сведения берутся из открытых источников, ошибки интерпретации или неточности возможны. Если вы заметили ошибку — она там, скорее всего, есть.',
-    notes:     isEn
-      ? 'Every place page has a “Leave a note” button. A note goes to the moderator by e-mail, is not published automatically, and may be worked into the page if it adds something worth having. Nothing is stored on the site.'
-      : 'На странице каждого объекта есть кнопка «Оставить заметку». Заметка уходит модератору на почту, не публикуется автоматически и может войти в текст страницы, если добавляет что-то стоящее. На сайте ничего не сохраняется.',
     support:   isEn ? 'Support the project:' : 'Поддержать проект:',
     citiesH2:  isEn ? 'Cities' : 'Города',
     sourcesH2: isEn ? 'Sources' : 'Источники',
@@ -104,8 +101,6 @@ export function renderAboutPage(city: City | undefined, lang: Lang = 'ru'): stri
   <p>${t.intro2}</p>
 
   <div class="note">${t.note}</div>
-
-  <p>${t.notes}</p>
 
   <div class="support-section">
     <p>${t.support}</p>

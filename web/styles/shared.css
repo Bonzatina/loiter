@@ -1,16 +1,27 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: system-ui, sans-serif; background: #fafaf8; color: #222; }
 
+/* Two rows: site furniture on top, the region switcher on its own line below.
+   See renderHeader() for why. */
 header {
   background: #2e7d32;
   color: #fff;
-  padding: 14px 24px;
+  padding: 12px 24px 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.header-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+  min-width: 0;
 }
-.header-left { display: flex; align-items: baseline; gap: 16px; }
+/* The switcher is alone on its row, so it starts at the left edge under the
+   wordmark rather than stretching across it. */
+.header-row-site { justify-content: flex-start; }
+.header-nav { flex: 0 0 auto; }
 header h1 { font-size: 1.25rem; font-weight: 600; }
 header h1 a { color: inherit; text-decoration: none; }
 header span { font-size: 0.85rem; opacity: 0.75; }
@@ -38,7 +49,7 @@ header span { font-size: 0.85rem; opacity: 0.75; }
 /* ── City switcher ─────────────────────────────────────────────────────────
    A <details> dropdown so it needs no JavaScript. Chrome the standalone city
    sites do not have; everything above this line is shared with them verbatim. */
-.city-switcher { position: relative; }
+.city-switcher { position: relative; min-width: 0; }
 .city-switcher > summary {
   list-style: none;
   cursor: pointer;
@@ -49,14 +60,29 @@ header span { font-size: 0.85rem; opacity: 0.75; }
   border: 1px solid rgba(255,255,255,0.35);
   border-radius: 3px;
   line-height: 1.5;
+  /* Flex, not a text run, so the name can be clipped while the arrow stays put.
+     As one text run the ellipsis ate the ▾ before it ate any of the name. */
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+.city-switcher-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
+  /* `header span` above sets 0.85rem/0.75 opacity and a class beats two type
+     selectors only for the properties it names. Without these two the name would
+     have come out dimmed and a size smaller than the summary it sits in. */
+  font-size: inherit;
+  opacity: 1;
 }
 .city-switcher > summary::-webkit-details-marker { display: none; }
 .city-switcher > summary::after {
   content: '▾';
   font-size: 0.7rem;
-  margin-left: 7px;
   opacity: 0.8;
+  flex: none;
 }
 .city-switcher > summary:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.6); }
 .city-switcher[open] > summary { background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.6); }
@@ -68,6 +94,9 @@ header span { font-size: 0.85rem; opacity: 0.75; }
   top: calc(100% + 6px);
   left: 0;
   min-width: 180px;
+  /* The switcher sits ~14 px from the left edge; the longest entry is wider than a
+     phone, so cap it here and let the entries wrap rather than run off-screen. */
+  max-width: calc(100vw - 28px);
   list-style: none;
   background: #fff;
   border: 1px solid #d8d8d3;
@@ -103,6 +132,21 @@ header span { font-size: 0.85rem; opacity: 0.75; }
   content: '·';
   margin-right: 6px;
   margin-left: -8px;
+}
+
+/* ── Narrow screens ─────────────────────────────────────────────────────────
+   The two rows already solve the crowding; this only tightens the desktop
+   padding and type, which on a phone cost more vertical space than they buy in
+   legibility. The name truncation is still in place behind it, for a long label
+   on a very narrow screen. Nothing is ever hidden: on a phone the switcher is
+   the main way around the site. */
+@media (max-width: 620px) {
+  header { padding: 9px 14px 10px; gap: 8px; }
+  header h1 { font-size: 1.1rem; }
+  .header-nav { gap: 10px; }
+  .header-nav a { font-size: 0.8rem; }
+  .city-switcher > summary { font-size: 0.88rem; padding: 3px 9px; gap: 6px; }
+  .lang-btn { padding: 2px 5px; }
 }
 
 footer {

@@ -66,7 +66,7 @@ function renderCitySwitcher(current: City | undefined, lang: Lang): string {
   }).join('')
 
   return `<details class="city-switcher">
-    <summary title="${ui.chooseCity}">${current ? current.name[lang] : ui.allCities}</summary>
+    <summary title="${ui.chooseCity}"><span class="city-switcher-name">${current ? current.name[lang] : ui.allCities}</span></summary>
     <ul>
       ${body}
     </ul>
@@ -136,14 +136,21 @@ export function renderHeader(
   }
   const langSwitcher = renderLangSwitcher(lang, ruHref, enHref, Boolean(slug) && !hasEn)
 
+  // Two rows. The first is the site's own furniture — wordmark, about, language —
+  // and never changes width; the second belongs to the region switcher alone, which
+  // is what a reader actually reaches for and what carries the longest label.
+  // Sharing one row meant «Спиш и Словацкое Рудогорье» competing with three fixed
+  // controls for the same 400 px.
   return `<header>
-  <div class="header-left">
+  <div class="header-row">
     <h1><a href="${citiesUrl(nav)}">Loiter</a></h1>
+    <nav class="header-nav">
+      <a href="${aboutHref}"${activePage === 'about' ? ' class="active"' : ''}>${ui.about}</a>
+      ${langSwitcher}
+    </nav>
+  </div>
+  <div class="header-row header-row-site">
     ${renderCitySwitcher(city, nav)}
   </div>
-  <nav class="header-nav">
-    <a href="${aboutHref}"${activePage === 'about' ? ' class="active"' : ''}>${ui.about}</a>
-    ${langSwitcher}
-  </nav>
 </header>`
 }

@@ -57,18 +57,37 @@ p { line-height: 1.75; margin-bottom: 14px; color: #333; }
   display: flex;
   align-items: baseline;
   gap: 12px;
+  min-width: 0;
 }
+/* `min-width` keeps the two columns aligned; what must NOT come back is
+   `flex-shrink: 0`. A flex item that cannot shrink is laid out at its content
+   width whatever the container is, so one row with three ferry timetables in it
+   — `kompmenetrend.hu · kompok-revek.hu · szentendrekomp.hu`, twice as long as
+   any other domain in the registry — widened the whole page and put a horizontal
+   scrollbar under every source list. Shrinking is floored by `min-width`, so the
+   ordinary rows are untouched and only an over-long one wraps, at the spaces
+   around the separators. `anywhere` is the backstop for a single domain longer
+   than the column, which does not exist today but is one ingest away. */
 .src-domain {
   font-family: monospace;
   font-size: 0.88rem;
   color: #1565c0;
   min-width: 240px;
-  flex-shrink: 0;
+  overflow-wrap: anywhere;
 }
 .src-desc {
   font-size: 0.88rem;
   color: #555;
   line-height: 1.5;
+  min-width: 0;
+}
+
+/* Below this the 240 px domain column leaves the description a strip too narrow
+   to read, so the two stop being columns and become two lines. */
+@media (max-width: 620px) {
+  .sources-list { gap: 14px; }
+  .sources-list li { flex-direction: column; gap: 2px; }
+  .src-domain { min-width: 0; }
 }
 
 /* City list on the project-level about page, where a source list would be. */
