@@ -459,6 +459,14 @@ changes.
 
 ## Working Here
 
+- **Proofreading has a skill**: `/proofread` (`.claude/skills/proofread/`). Use it on any
+  subproject whose pages were written fast or have never been re-read. It carries the
+  order of work, three checks and — more usefully — the ledger of defects this author
+  actually makes, in `references/defects.md`. Two numbers from the sweep it came out of
+  are the whole point of reading it first: **reading found 44 of 49 defects**, and
+  **three of the 49 were introduced by an earlier proofread of the same text**. Update
+  the ledger every sweep; a class recorded there is one the next sweep will not have to
+  rediscover.
 - **Do not read** `wiki_*/raw/` or the content pages under `wiki_*/wiki/` while working
   on the engine — the volume is large and irrelevant to it. Frontmatter fields, the
   district-folder convention and this file are enough. Read content only when the task
