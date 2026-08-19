@@ -11,6 +11,7 @@ export const viennaAbout: AboutData = {
   sources: [
     { domain: 'geschichtewiki.wien.gv.at', ru: 'Историческая энциклопедия города Вены', en: 'Historical encyclopaedia of the city of Vienna' },
     { domain: 'de.wikipedia.org',          ru: 'Немецкая Википедия',                    en: 'German Wikipedia' },
+    { domain: 'en.wikipedia.org',          ru: 'Английская Википедия',                  en: 'English Wikipedia' },
     { domain: 'commons.wikimedia.org',     ru: 'Викисклад',                             en: 'Wikimedia Commons' },
     { domain: 'wien.gv.at',                ru: 'Городской портал Вены',                 en: 'City of Vienna portal' },
     { domain: 'schoenbrunn.at',            ru: 'Дворец Шёнбрунн',                       en: 'Schönbrunn Palace' },
@@ -19,5 +20,6 @@ export const viennaAbout: AboutData = {
     { domain: 'friedhoefewien.at',         ru: 'Кладбища Вены',                         en: 'Vienna cemeteries' },
     { domain: 'tw-arch.at',                ru: 'Бюро Tillner & Willinger — URBION',     en: 'Tillner & Willinger architects — URBION' },
     { domain: 'vol.at',                    ru: 'Отчёт комиссии по Вильхельминенбергу',  en: 'Report of the Wilhelminenberg commission' },
+    { domain: 'visitingvienna.com',        ru: 'Visiting Vienna — путеводитель по городу', en: 'Visiting Vienna city guide' },
   ],
 }
