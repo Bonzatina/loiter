@@ -23,5 +23,6 @@ export const viennaAbout: AboutData = {
     { domain: 'visitingvienna.com',        ru: 'Visiting Vienna — путеводитель по городу', en: 'Visiting Vienna city guide' },
     { domain: 'atlasobscura.com',          ru: 'Atlas Obscura — необычные места',        en: 'Atlas Obscura, unusual places' },
     { domain: 'kunstsammler.at',           ru: 'kunstsammler.at — о коллекционерах',    en: 'kunstsammler.at on collectors' },
+    { domain: 'peacemuseumvienna.com',      ru: 'Музей мира в Вене',                     en: 'Peace Museum Vienna' },
   ],
 }
