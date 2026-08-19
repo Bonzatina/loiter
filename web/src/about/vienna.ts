@@ -17,5 +17,7 @@ export const viennaAbout: AboutData = {
     { domain: 'zoovienna.at',              ru: 'Зоопарк Шёнбрунна',                     en: 'Schönbrunn Zoo' },
     { domain: 'wienmuseum.at',             ru: 'Венский музей',                         en: 'Wien Museum' },
     { domain: 'friedhoefewien.at',         ru: 'Кладбища Вены',                         en: 'Vienna cemeteries' },
+    { domain: 'tw-arch.at',                ru: 'Бюро Tillner & Willinger — URBION',     en: 'Tillner & Willinger architects — URBION' },
+    { domain: 'vol.at',                    ru: 'Отчёт комиссии по Вильхельминенбергу',  en: 'Report of the Wilhelminenberg commission' },
   ],
 }
