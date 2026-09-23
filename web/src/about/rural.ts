@@ -80,7 +80,6 @@ export const ruralAbout: AboutData = {
     { domain: 'szentendrekomp.hu',         ru: 'Паром Сентендре–Сигетмоностор',                                   en: 'Szentendre–Szigetmonostor ferry' },
     { domain: 'bahart.hu',                 ru: 'Балатонское пароходство (BAHART)',                                en: 'Balaton Shipping Company (BAHART)' },
     { domain: 'kompazahorskaves.moderneobce.sk', ru: 'Паром Загорска Вес–Ангерн', en: 'Záhorská Ves–Angern ferry' },
-    { domain: 'gyermekvasut.hu',           ru: 'Детская железная дорога (Будапешт)',                              en: 'Children\'s Railway (Budapest)' },
     { domain: 'hungarianottomanwars.com',  ru: 'Замки и история венгерско-османских войн',                        en: 'Castles and history of the Hungarian–Ottoman wars' },
     { domain: 'oroksegnapok.gov.hu',       ru: 'Дни культурного наследия Венгрии',                                en: 'Hungarian Heritage Days' },
     { domain: 'mkik.hu',                   ru: 'Венгерская торгово-промышленная палата',                          en: 'Hungarian Chamber of Commerce and Industry' },
