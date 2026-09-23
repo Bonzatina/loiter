@@ -38,6 +38,25 @@ async function main(): Promise<void> {
     )
   }
 
+  // A subproject split over several sites (the rural wiki) serves only the area
+  // folders its sites list in `areas`. A new folder listed nowhere is on no map —
+  // silently, because the loader just skips it — so name it here.
+  console.log('\n── Areas ' + '─'.repeat(60))
+  for (const dir of [...new Set(CITIES.filter(c => c.areas).map(c => c.dir))]) {
+    const sites = CITIES.filter(c => c.dir === dir)
+    const root = contentRoot(sites[0])
+    const { flatDirs, ignoreDirs } = sites[0].taxonomy
+    const listed = new Set(sites.flatMap(c => c.areas ?? []))
+    const folders = fsSync.readdirSync(root).filter(d =>
+      fsSync.statSync(`${root}/${d}`).isDirectory() && !flatDirs.includes(d) && !ignoreDirs.includes(d))
+    const orphans = folders.filter(d => !listed.has(d))
+    const ghosts = [...listed].filter(a => !folders.includes(a))
+    if (orphans.length || ghosts.length) problems++
+    console.log(`  ${pad(dir, 18)} ${folders.length} area folders over ${sites.length} sites` +
+      (orphans.length ? `\n      ! served by no site: ${orphans.join(', ')}` : '') +
+      (ghosts.length ? `\n      ! listed but missing: ${ghosts.join(', ')}` : ''))
+  }
+
   console.log('\n── Pages ' + '─'.repeat(60))
   for (const city of CITIES) {
     const pages = await loadWikiPages(city)

@@ -110,7 +110,9 @@ physical geography: the Bend is the Duna–Ipoly National Park (dunakanyar, pili
 Velence are Transdanubia; the Danube valley south of Budapest is part of the Great Plain;
 the Mátra, the Bükk, Novohrad and the Gödöllő Hills are the Northern Uplands
 (Északi-középhegység), which the Great Plain site had wrongly held. A new area goes to the
-cluster whose landscape it belongs to, not to whichever map it happens to fit.
+cluster whose landscape it belongs to, not to whichever map it happens to fit — and it has
+to be added there: an area folder listed in no `areas` is served by no site, and
+`npm run check` reports it.
 
 The names avoid naming a state. «Верхняя Венгрия» was the first name for the Slovak
 uplands cluster and is not usable: in present-day use it carries an irredentist edge, and
@@ -223,8 +225,8 @@ remembered client-side so a return visit to `/` can offer it.
 
 **One city at a time — strictly.** The map, the list and the search always operate
 inside a single city's bounds, exactly as in the subprojects. There is no all-cities
-overview map and no cross-city search: the combined site is five city sites sharing one
-engine, not one site about five cities. Serving ~950 objects to the client at once, and
+overview map and no cross-city search: the combined site is six city sites and six rural
+ones sharing one engine, not one site about all of them. Serving ~950 objects to the client at once, and
 deciding what an intermediate zoom level should show, are problems this deliberately
 does not take on. `/` is the only page that knows about more than one city.
 
@@ -293,7 +295,7 @@ Two paths, same filesystem layout, so the code never branches:
   Do not put the SSH alias back into `.gitmodules` — that is what broke portability.
 
   **The city repositories are private**, so a build host needs its own credential: a
-  fine-grained token with `Contents: Read` on those five repos, passed as
+  fine-grained token with `Contents: Read` on those repos, passed as
   `GIT_SUBMODULE_TOKEN` and applied by a *conditional* rewrite in `render.yaml`. It is
   conditional so the first deploy can be tried without it — Render reaches GitHub through
   its own app, which may already have access. Making the repos public would remove the
