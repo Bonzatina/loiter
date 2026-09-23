@@ -100,6 +100,12 @@ function engineFiles(web: string): string[] {
 function normalise(text: string, file: string): string[] {
   let t = text.replace(/\/\*[\s\S]*?\*\//g, '')
 
+  // The about page's opening sentence enumerates the site's own topics — site data.
+  // Dropped before the brand is masked, since masking eats the words that find it.
+  if (file.endsWith('page-about.ts')) {
+    t = t.split('\n').filter(l => !/interactive encyclopaedia|интерактивная энциклопедия/.test(l)).join('\n')
+  }
+
   // Site data.
   t = t
     .replace(/Loiter: [^'"`<\n]+/g, 'Loiter: {BRAND}')
@@ -122,8 +128,7 @@ function normalise(text: string, file: string): string[] {
   if (file.endsWith('page-about.ts')) {
     lines = lines.filter(l =>
       !/^'[^']+':\s*'.*',?$/.test(l) &&                      // source descriptions
-      !/^\$\{src\('/.test(l) &&                                // source list rows
-      !/interactive encyclopaedia|интерактивная энциклопедия/.test(l))
+      !/^\$\{src\('/.test(l))                                  // source list rows
   }
   return lines
 }
