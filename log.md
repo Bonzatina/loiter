@@ -1089,3 +1089,7 @@ gyermekvasut.hu убран из `web/src/about/rural.ts`; в списке Буд
 ## [2026-09-23] feat | Седьмой сельский сайт: Южное Задунавье
 
 В `web/src/cities.ts` — новая запись `del-dunantul` («Loiter: Южное Задунавье» / Southern Transdanubia): области `mecsek`, `villanyi-hegyseg`, `zselic`, центр [46.12, 18.10], zoom 10, карточка `pecs-szechenyi-ter.jpg`, общий `ruralAbout`. Это отдельный ландшафт между Балатоном и Дравой, а не южное продолжение сайта Балатона. Указатель `wiki_rural_travel` передвинут; в `web/src/about/rural.ts` — 16 новых доменов. Сельская вики теперь раздаётся семью сайтами — таблицу в CLAUDE.md нужно обновить.
+
+## [2026-09-23] feat | Южное Задунавье: Орманшаг
+
+Сайт `del-dunantul` в `web/src/cities.ts` обслуживает также `ormansag`; центр карты сдвинут на [46.10, 18.20], чтобы в кадр входили Мохач и Орманшаг. Указатель `wiki_rural_travel` передвинут; в `web/src/about/rural.ts` — 9 новых доменов.
