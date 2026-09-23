@@ -30,6 +30,8 @@ export const RURAL_ROUTES: RouteLine[] = [
   { slug: 'Horány-Dunakeszi komp',          type: 'ferry',   terminus: 'Dunakeszi',      points: [[47.66038, 19.112707], [47.65767, 19.11941]] },
   { slug: 'Kompjarat-Tihany-Szantod',       type: 'ferry',   terminus: 'Szántódrév',     points: [[46.88864, 17.89173], [46.87962, 17.90023]] },
   { slug: 'Cunovo-Hamuliakovo-komp',        type: 'ferry',   terminus: 'Hamuliakovo',    points: [[48.03317, 17.22685], [48.03600, 17.25100]] },
+  { slug: 'Kompa-Zahorska-Ves-Angern',      type: 'ferry',   terminus: 'Angern an der March', points: [[48.38220, 16.83417], [48.38246, 16.83334]] },
   { slug: 'Balatonfenyves-kisvaut',         type: 'railway', terminus: 'Somogyszentpál', points: [[46.71284, 17.48233], [46.64162, 17.47394]] },
   { slug: 'Ciernohronska-zeleznica',        type: 'railway', terminus: 'Hronec',         points: [[48.74546, 19.66005], [48.80233, 19.57500]] },
+  { slug: 'Matrai-kisvasut',                type: 'railway', terminus: 'Mátrafüred',     points: [[47.78412, 19.93347], [47.78946, 19.93756], [47.79785, 19.94497], [47.80594, 19.95114], [47.81284, 19.95877], [47.82701, 19.97130], [47.83064, 19.97070]] },
 ]
