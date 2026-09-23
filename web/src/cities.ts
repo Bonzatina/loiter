@@ -350,6 +350,27 @@ export const CITIES: City[] = [
     cardImage: 'holloko-village.jpg',
     about: ruralAbout,
   },
+  {
+    // Dél-Dunántúl, Southern Transdanubia: the Mecsek and Pécs, the Villány hills
+    // with Siklós and Harkány, and the Zselic with Kaposvár and Szigetvár. Its own
+    // landscape between Lake Balaton and the Drava — not a southern annex of Balaton.
+    slug: 'del-dunantul',
+    dir: 'wiki_rural_travel',
+    kind: 'rural',
+    taxonomy: RURAL_TAXONOMY,
+    routes: RURAL_ROUTES,
+    areas: ['mecsek', 'villanyi-hegyseg', 'zselic'],
+    brand: 'Loiter: Южное Задунавье',
+    name: { ru: 'Южное Задунавье', en: 'Southern Transdanubia' },
+    center: [46.1200, 18.1000],
+    zoom: 10,
+    stateKey: 'del_dunantul_map_state_v1',
+    timezone: 'Europe/Budapest',
+    districtLabel: 'Регион',
+    domains: ['museums', 'nature', 'thermal', 'lookout', 'transport'],
+    cardImage: 'pecs-szechenyi-ter.jpg',
+    about: ruralAbout,
+  },
 ]
 
 // ── Derived paths ────────────────────────────────────────────────────────────

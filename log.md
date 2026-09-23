@@ -1085,3 +1085,7 @@ gyermekvasut.hu убран из `web/src/about/rural.ts`; в списке Буд
 ## [2026-09-23] feat | Большая равнина: три новых региона
 
 Указатель `wiki_rural_travel` передвинут на коммит с регионами Южный Альфёльд, Кёрёш–Марош и Сатмар–Берег. В `web/src/cities.ts` сайт alfold обслуживает также `del-alfold`, `koros-maros` и `szatmar-bereg`; центр карты сдвинут на [47.20, 20.67], чтобы при zoom 8 в кадр входили Сегед и Сатмар. В `web/src/about/rural.ts` — 14 новых доменов.
+
+## [2026-09-23] feat | Седьмой сельский сайт: Южное Задунавье
+
+В `web/src/cities.ts` — новая запись `del-dunantul` («Loiter: Южное Задунавье» / Southern Transdanubia): области `mecsek`, `villanyi-hegyseg`, `zselic`, центр [46.12, 18.10], zoom 10, карточка `pecs-szechenyi-ter.jpg`, общий `ruralAbout`. Это отдельный ландшафт между Балатоном и Дравой, а не южное продолжение сайта Балатона. Указатель `wiki_rural_travel` передвинут; в `web/src/about/rural.ts` — 16 новых доменов. Сельская вики теперь раздаётся семью сайтами — таблицу в CLAUDE.md нужно обновить.
