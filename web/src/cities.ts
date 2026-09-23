@@ -268,10 +268,10 @@ export const CITIES: City[] = [
     taxonomy: RURAL_TAXONOMY,
     routes: RURAL_ROUTES,
     // Tata (Gerecse) and Lake Velence are Transdanubia too, and belong here.
-    areas: ['balaton', 'bakony', 'kisalföld', 'gerecse', 'velence'],
+    areas: ['balaton', 'bakony', 'kisalföld', 'gerecse', 'velence', 'orseg'],
     brand: 'Loiter: Балатон и Задунавье',
     name: { ru: 'Балатон и Задунавье', en: 'Balaton & Transdanubia' },
-    center: [47.1535, 17.6080],
+    center: [47.1535, 17.4500],
     zoom: 8,
     stateKey: 'balaton_map_state_v2',
     timezone: 'Europe/Budapest',
