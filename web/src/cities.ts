@@ -316,10 +316,10 @@ export const CITIES: City[] = [
     // The plain between and beside the rivers, the Danube valley south of Budapest
     // (Dél-Duna: Ráckeve, Dunaújváros, Paks) included. The Mátra and the Bükk are
     // mountains and moved to the Northern Uplands.
-    areas: ['kiskunság', 'tiszavidék', 'hortobágy', 'del-duna'],
+    areas: ['kiskunság', 'tiszavidék', 'hortobágy', 'del-duna', 'del-alfold', 'koros-maros', 'szatmar-bereg'],
     brand: 'Loiter: Большая равнина',
     name: { ru: 'Большая равнина', en: 'Great Plain' },
-    center: [47.1283, 20.0007],
+    center: [47.2000, 20.6700],
     zoom: 8,
     stateKey: 'alfold_map_state_v2',
     timezone: 'Europe/Budapest',
