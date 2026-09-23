@@ -46,11 +46,40 @@ function stripLeadingH1(text: string): string {
   return text.replace(/^\s*#\s+.*(\r?\n)+/, '')
 }
 
-/** `[[Slug]]` and `[[Slug|Label]]` → links inside this city's namespace. */
-function processWikilinks(text: string, prefix: string): string {
+/**
+ * `[[Slug]]` and `[[Slug|Label]]` → links into the namespace of the site that
+ * serves the target. For a city that is always the city itself. The rural wiki is
+ * split over several sites, and its pages link across them — a concept shown on
+ * every site mentions places in every landscape — so a target this site does not
+ * serve goes to the sibling site that does, instead of to a 404 here.
+ */
+function processWikilinks(text: string, prefixFor: (slug: string) => string): string {
+  const link = (slug: string, label: string): string =>
+    `[${label}](${prefixFor(slug.trim())}/${encodeURIComponent(slug.trim())})`
   return text
-    .replace(/\[\[([^\]|]+?)\\?\|([^\]]+)\]\]/g, (_, slug, label) => `[${label}](${prefix}/${encodeURIComponent(slug.trim())})`)
-    .replace(/\[\[([^\]]+)\]\]/g, (_, slug) => `[${slug}](${prefix}/${encodeURIComponent(slug.trim())})`)
+    .replace(/\[\[([^\]|]+?)\\?\|([^\]]+)\]\]/g, (_, slug, label) => link(slug, label))
+    .replace(/\[\[([^\]]+)\]\]/g, (_, slug) => link(slug, slug))
+}
+
+/**
+ * Which site's namespace a wikilink target belongs to, seen from `city`: the city
+ * itself when it serves the slug (or nobody does), else the first sibling site out
+ * of the same subproject that does. Built from the cached page lists, so it costs
+ * nothing once the sites are warm.
+ */
+async function linkResolver(city: City, nav: Lang): Promise<(slug: string) => string> {
+  const own = wikiPrefix(city.slug, nav)
+  const siblings = CITIES.filter(c => c.dir === city.dir && c.slug !== city.slug)
+  if (!siblings.length) return () => own
+  const served = new Set((await loadWikiPages(city)).map(p => p.slug.toLowerCase()))
+  const elsewhere = new Map<string, string>()
+  for (const sib of siblings) {
+    for (const p of await loadWikiPages(sib)) {
+      const k = p.slug.toLowerCase()
+      if (!served.has(k) && !elsewhere.has(k)) elsewhere.set(k, wikiPrefix(sib.slug, nav))
+    }
+  }
+  return slug => elsewhere.get(slug.toLowerCase()) ?? own
 }
 
 /**
@@ -86,7 +115,7 @@ async function serveWikiPage(
   const raw = await fs.readFile(filePath, 'utf-8')
   const { content, data } = matter(raw)
   const body = processAssetPaths(
-    processWikilinks(stripLeadingH1(content), wikiPrefix(city.slug, nav)),
+    processWikilinks(stripLeadingH1(content), await linkResolver(city, nav)),
     city,
   )
   const bodyHtml = marked.parse(body) as string

@@ -79,31 +79,44 @@ picker and the switcher group by it so the rural wiki is not offered as a sixth 
 
 ### One subproject, several sites — `areas`
 
-The rural wiki is served as **five sites**, not one. It spans 377 km east to west and
+The rural wiki is served as **six sites**, not one. It spans 377 km east to west and
 257 north to south; at the single starting view it once had, 413 of its 772 mapped
 objects were off screen, Balaton (113 objects) and Burgenland (80) among them. A registry
 entry may therefore name the area folders it covers, and the loader serves only those:
 
-| Site | Areas |
-|---|---|
-| Излучина Дуная | dunakanyar, pilis, gerecse, gödöllői-dombság, velence, del-duna |
-| Малые Карпаты и Бургенланд | podunajsko, záhorie, male-karpaty, považie, ponitrie, burgenland, römerland |
-| Балатон и Задунавье | balaton, bakony, kisalföld |
-| Спиш и Словацкое Рудогорье | stiavnicke-vrchy, banskobystricky, novohrad, gemer, spiš, šariš, zemplín, abaujtorna |
-| Большая равнина | kiskunság, tiszavidék, hortobágy, mátra, bükk |
+| Site | Slug | Areas |
+|---|---|---|
+| Излучина Дуная | `dunakanyar` | dunakanyar, pilis |
+| Малые Карпаты и Бургенланд | `male-karpaty` | podunajsko, záhorie, male-karpaty, považie, ponitrie, burgenland, römerland |
+| Балатон и Задунавье | `balaton` | balaton, bakony, kisalföld, gerecse, velence |
+| Спиш и Словацкое Рудогорье | `spis-rudohorie` | stiavnicke-vrchy, banskobystricky, gemer, spiš, šariš, zemplín, abaujtorna |
+| Большая равнина | `alfold` | kiskunság, tiszavidék, hortobágy, del-duna |
+| Северное среднегорье | `matra-bukk` | mátra, bükk, novohrad, gödöllői-dombság |
 
 The repository is untouched by this: one `dir`, one submodule pointer, one standalone app.
 Only the presentation is split. `concepts/` and `people/` are cross-region and shared by
-all five; the area overview pages in `regions/` follow their cluster. Route lines follow
-whichever site serves their page — otherwise all five drew all ten, putting the Danube
-ferries on the Balaton map.
+all six; the area overview pages in `regions/` follow their cluster. Route lines follow
+whichever site serves their page — otherwise every site drew all ten, putting the Danube
+ferries on the Balaton map. **Wikilinks follow the site that serves their target**
+(`linkResolver` in `server.ts`): a concept shown on every site mentions places in every
+landscape, and until links crossed sites 38 % of the rural wiki's body links led to a
+404 on the site they were read on.
 
-**The clusters are landscapes, not countries**, and the names avoid naming a state.
-«Верхняя Венгрия» was the first name for the fifth and is not usable: in present-day use
-it carries an irredentist edge, and it misdirects a traveller by naming a country that has
-not existed for a century. The obvious replacement, «Средняя и Восточная Словакия», is
-factually wrong — Hollókő, a UNESCO village, and the Drégely castle sit inside that
-cluster on the Hungarian side. Check the coordinates before renaming it again.
+**The clusters are landscapes, not countries, and each is one landscape.** The first cut
+put six areas under «Излучина Дуная» — Tata, Lake Velence, the Danube south of Budapest and
+the Gödöllő Hills among them — because they fitted one map around the capital; none of them
+is the Bend, and they lie on four sides of Budapest. Since 2026-09-23 the grouping follows
+physical geography: the Bend is the Duna–Ipoly National Park (dunakanyar, pilis); Tata and
+Velence are Transdanubia; the Danube valley south of Budapest is part of the Great Plain;
+the Mátra, the Bükk, Novohrad and the Gödöllő Hills are the Northern Uplands
+(Északi-középhegység), which the Great Plain site had wrongly held. A new area goes to the
+cluster whose landscape it belongs to, not to whichever map it happens to fit.
+
+The names avoid naming a state. «Верхняя Венгрия» was the first name for the Slovak
+uplands cluster and is not usable: in present-day use it carries an irredentist edge, and
+it misdirects a traveller by naming a country that has not existed for a century. With
+Novohrad moved out that cluster now lies wholly in Slovakia, and its name still names the
+landscapes, not the state.
 
 ## The City Registry — `web/src/cities.ts`
 

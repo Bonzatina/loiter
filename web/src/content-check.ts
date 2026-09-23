@@ -79,7 +79,7 @@ async function main(): Promise<void> {
   //
   // Keyed by SUBPROJECT, not by site. Five sites serve the rural wiki, and its
   // cross-region concepts and people appear in all of them by design; that is one
-  // page reachable at five URLs, not a name clash, and counting it as one buried the
+  // page reachable at six URLs, not a name clash, and counting it as one buried the
   // real collisions under fifty-odd false ones.
   const dirOf = new Map(CITIES.map(c => [c.slug, c.dir]))
   const owners = new Map<string, Set<string>>()

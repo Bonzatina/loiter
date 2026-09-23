@@ -58,7 +58,7 @@ export interface City {
    * Several sites may share one subproject. The rural wiki spans 377 km east to west,
    * far more than one map can show — at its old single starting view 413 of its 772
    * mapped objects were off screen, Balaton and Burgenland among them — so it is
-   * presented as five landscape clusters, each with its own map, while remaining one
+   * presented as six landscape clusters, each with its own map, while remaining one
    * repository with one history and one standalone app.
    *
    * Omit to serve every area in `dir`, which is what each city does.
@@ -201,9 +201,9 @@ export const CITIES: City[] = [
     cardImage: 'stephansdom.jpg',
     about: viennaAbout,
   },
-  // ── The rural wiki, presented as five landscapes ───────────────────────────
+  // ── The rural wiki, presented as six landscapes ────────────────────────────
   //
-  // One repository, one history, one standalone app — five sites here. It spans
+  // One repository, one history, one standalone app — six sites here. It spans
   // 377 km east to west and 257 north to south, and a single map could not show it:
   // at the old starting view 413 of its 772 mapped objects were off screen, Balaton
   // (113) and Burgenland (80) among them. Splitting the presentation gives each
@@ -214,7 +214,7 @@ export const CITIES: City[] = [
   // splitting by modern border would contradict the subproject's own premise, which
   // is cultural continuity across them.
   //
-  // `concepts/` and `people/` are cross-region and shared by all five: a note on
+  // `concepts/` and `people/` are cross-region and shared by all six: a note on
   // timber framing belongs to every landscape it appears in.
   //
   // Centres and zooms are computed from each cluster's own content, not guessed.
@@ -224,12 +224,15 @@ export const CITIES: City[] = [
     kind: 'rural',
     taxonomy: RURAL_TAXONOMY,
     routes: RURAL_ROUTES,
-    areas: ['dunakanyar', 'pilis', 'gerecse', 'gödöllői-dombság', 'velence', 'del-duna'],
+    // The Danube Bend proper and the Pilis — together the Duna–Ipoly National Park. It
+    // once also held Tata, Lake Velence, the Danube south of Budapest and the Gödöllő
+    // Hills, which lie on four sides of the capital and are none of them the Bend.
+    areas: ['dunakanyar', 'pilis'],
     brand: 'Loiter: Излучина Дуная',
     name: { ru: 'Излучина Дуная', en: 'Danube Bend' },
-    center: [47.3325, 18.7856],
-    zoom: 9,
-    stateKey: 'dunakanyar_map_state_v1',
+    center: [47.6837, 18.9664],
+    zoom: 10,
+    stateKey: 'dunakanyar_map_state_v2',
     timezone: 'Europe/Budapest',
     districtLabel: 'Регион',
     // Museums and thermal baths were invisible on the rural map before: its own
@@ -264,12 +267,13 @@ export const CITIES: City[] = [
     kind: 'rural',
     taxonomy: RURAL_TAXONOMY,
     routes: RURAL_ROUTES,
-    areas: ['balaton', 'bakony', 'kisalföld'],
+    // Tata (Gerecse) and Lake Velence are Transdanubia too, and belong here.
+    areas: ['balaton', 'bakony', 'kisalföld', 'gerecse', 'velence'],
     brand: 'Loiter: Балатон и Задунавье',
     name: { ru: 'Балатон и Задунавье', en: 'Balaton & Transdanubia' },
-    center: [47.1535, 17.4863],
+    center: [47.1535, 17.6080],
     zoom: 8,
-    stateKey: 'balaton_map_state_v1',
+    stateKey: 'balaton_map_state_v2',
     timezone: 'Europe/Budapest',
     districtLabel: 'Регион',
     domains: ['museums', 'nature', 'thermal', 'lookout', 'transport'],
@@ -281,9 +285,9 @@ export const CITIES: City[] = [
     // historically exact and unusable here: in present-day usage it carries an
     // irredentist edge that would read badly to a Slovak reader, and it also
     // misdirects a traveller by naming a country that has not existed for a century
-    // for territory that is now in another one. «Средняя и Восточная Словакия» was
-    // the obvious replacement and is wrong too — Hollókő, a UNESCO village, and the
-    // Drégely castle sit inside this cluster on the Hungarian side of the border.
+    // for territory that is now in another one. Since Novohrad moved to the Northern
+    // Uplands the cluster happens to lie wholly in Slovakia; the name still follows the
+    // family rule and names landscapes, not the state.
     // «Рудогорье» is qualified as Slovak because the bare name would collide with the
     // Erzgebirge, which this family also covers, next to Dresden.
     slug: 'spis-rudohorie',
@@ -291,12 +295,12 @@ export const CITIES: City[] = [
     kind: 'rural',
     taxonomy: RURAL_TAXONOMY,
     routes: RURAL_ROUTES,
-    areas: ['stiavnicke-vrchy', 'banskobystricky', 'novohrad', 'gemer', 'spiš', 'šariš', 'zemplín', 'abaujtorna'],
+    areas: ['stiavnicke-vrchy', 'banskobystricky', 'gemer', 'spiš', 'šariš', 'zemplín', 'abaujtorna'],
     brand: 'Loiter: Спиш и Словацкое Рудогорье',
     name: { ru: 'Спиш и Словацкое Рудогорье', en: 'Spiš & the Slovak Ore Mountains' },
-    center: [48.6741, 20.2406],
+    center: [48.7842, 20.2406],
     zoom: 8,
-    stateKey: 'spis_rudohorie_map_state_v1',
+    stateKey: 'spis_rudohorie_map_state_v2',
     timezone: 'Europe/Bratislava',
     districtLabel: 'Регион',
     domains: ['museums', 'nature', 'thermal', 'lookout', 'transport'],
@@ -309,16 +313,41 @@ export const CITIES: City[] = [
     kind: 'rural',
     taxonomy: RURAL_TAXONOMY,
     routes: RURAL_ROUTES,
-    areas: ['kiskunság', 'tiszavidék', 'hortobágy', 'mátra', 'bükk'],
+    // The plain between and beside the rivers, the Danube valley south of Budapest
+    // (Dél-Duna: Ráckeve, Dunaújváros, Paks) included. The Mátra and the Bükk are
+    // mountains and moved to the Northern Uplands.
+    areas: ['kiskunság', 'tiszavidék', 'hortobágy', 'del-duna'],
     brand: 'Loiter: Большая равнина',
     name: { ru: 'Большая равнина', en: 'Great Plain' },
-    center: [47.6474, 20.1814],
+    center: [47.1283, 20.0007],
     zoom: 8,
-    stateKey: 'alfold_map_state_v1',
+    stateKey: 'alfold_map_state_v2',
     timezone: 'Europe/Budapest',
     districtLabel: 'Регион',
     domains: ['museums', 'nature', 'thermal', 'lookout', 'transport'],
     cardImage: 'cifrapalota-kecskemet.jpg',
+    about: ruralAbout,
+  },
+  {
+    // Északi-középhegység, the North Hungarian Mountains, with the Novohrad basin that
+    // runs across the border: the Mátra and Eger, the Bükk, Hollókő and Ipolytarnóc,
+    // Fiľakovo and Modrý Kameň, and the Gödöllő Hills at the range's western foot.
+    // «Северное среднегорье» names the landscape, not the state it mostly lies in.
+    slug: 'matra-bukk',
+    dir: 'wiki_rural_travel',
+    kind: 'rural',
+    taxonomy: RURAL_TAXONOMY,
+    routes: RURAL_ROUTES,
+    areas: ['mátra', 'bükk', 'novohrad', 'gödöllői-dombság'],
+    brand: 'Loiter: Северное среднегорье',
+    name: { ru: 'Северное среднегорье', en: 'Northern Uplands' },
+    center: [47.8997, 19.8481],
+    zoom: 9,
+    stateKey: 'matra_bukk_map_state_v1',
+    timezone: 'Europe/Budapest',
+    districtLabel: 'Регион',
+    domains: ['museums', 'nature', 'thermal', 'lookout', 'transport'],
+    cardImage: 'holloko-village.jpg',
     about: ruralAbout,
   },
 ]
