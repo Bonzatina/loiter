@@ -328,10 +328,19 @@ function citedHosts(sp: Subproject, docs: Doc[]): Map<string, string> {
 const covered = (host: string, list: string[]): boolean =>
   list.some(d => host === d || host.endsWith('.' + d))
 
-/** The original name a RU title carries: the first comma part of a Latin parenthesis. */
-function originalOf(title: string): string | null {
+/** Case- and diacritic-free key for comparing place names. */
+const placeKey = (s: string): string =>
+  s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, ' ').trim()
+
+/**
+ * The original name a RU title carries: the first comma part of a Latin parenthesis.
+ * `towns` (rural places only) are settlement and region names: «(Tatabánya)» after a
+ * sculpture says where it stands, not what it is called, so it is not an original.
+ */
+function originalOf(title: string, towns?: Set<string>): string | null {
   for (const m of title.matchAll(/\(([^()]+)\)/g)) {
     const first = m[1].split(',')[0].trim()
+    if (towns?.has(placeKey(first))) continue
     if (LATIN.test(first) && !CYRILLIC.test(first)) return first
   }
   return null
@@ -339,13 +348,13 @@ function originalOf(title: string): string | null {
 
 const fold = (s: string): string => s.normalize('NFC').toLowerCase()
 
-function titleProblem(d: Doc, ruTitle: string): string | null {
+function titleProblem(d: Doc, ruTitle: string, towns?: Set<string>): string | null {
   const t = String(d.data.title ?? '')
   // Two original names inside one parenthesis may be slashed; the title itself may not.
   if (/ \| | \/ /.test(t.replace(/\([^()]*\)/g, ''))) return 'separator'
   if (d.lang === 'ru') {
     if (!CYRILLIC.test(t)) return null                       // the name is the original
-    if (originalOf(t)) return null
+    if (originalOf(t, towns)) return null
     // A brand kept in the Latin script inside the Russian name — «Музей Urban
     // Nation», «Научный центр Spectrum» — shows the original too. A parenthesis
     // naming a place in Cyrillic («(Бадачонь)») does not.
@@ -400,9 +409,22 @@ async function checkContent(): Promise<void> {
 
     // Titles: the original name travels with the translated one.
     const titles: string[] = []
+    // Rural places name their village in the same parenthesis as the original —
+    // «(Egry József Múzeum, Badacsony)» — so a village alone there is not enough.
+    // Cities write no location into a place title, so the rule stays rural.
+    const towns = new Set<string>()
+    if (sp.kind === 'rural') {
+      for (const d of docs) {
+        if (d.lang !== 'ru' || (d.page.type !== tax.areaType && d.page.type !== tax.subareaType)) continue
+        towns.add(placeKey(d.page.slug))
+        const o = originalOf(String(d.data.title ?? ''))
+        if (o) towns.add(placeKey(o))
+      }
+    }
     for (const d of docs) {
       if (!mapTypes.has(d.page.type)) continue
-      const p = titleProblem(d, ruTitle.get(d.page.slug) ?? '')
+      const isPlace = d.page.type === 'place' || tax.routeTypes.includes(d.page.type)
+      const p = titleProblem(d, ruTitle.get(d.page.slug) ?? '', isPlace && towns.size ? towns : undefined)
       if (p) titles.push(`${pad(p, 12)} ${d.rel}: ${String(d.data.title ?? '')}`)
     }
     row(sp.dir, 'original name in title', titles)
