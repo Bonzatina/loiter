@@ -471,6 +471,11 @@ changes.
   about lists, the original name in every map object's title, `fame` on every city place,
   `domain:` from `DOMAIN_VOCABULARY`, wikilinks that resolve. A fix to one standalone
   engine is done in all of them in the same sweep, or the check says so.
+- **The rules every wiki shares are written once**, in `tools/family-rules.md`, and copied
+  into each subproject's CLAUDE.md between `loiter-family-rules` markers by
+  `node tools/sync-family-rules.mjs`. Change a shared rule there, sync, and commit the copies
+  inside each subproject; the family check fails while any copy differs. A subproject's own
+  sections cover only what is genuinely its own — its geography, its domains table, its app.
 - **Proofreading has a skill**: `/proofread` (`.claude/skills/proofread/`). Use it on any
   subproject whose pages were written fast or have never been re-read. It carries the
   order of work, three checks and — more usefully — the ledger of defects this author

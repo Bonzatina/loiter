@@ -238,6 +238,18 @@ function checkProbes(): void {
     }
     row(sp.dir, 'features', missing)
   }
+
+  // The shared rules: every CLAUDE.md carries tools/family-rules.md verbatim between
+  // its markers (tools/sync-family-rules.mjs writes them).
+  const master = (read(path.join(FAMILY_ROOT, 'tools', 'family-rules.md')) ?? '').trim()
+  for (const sp of SUBPROJECTS) {
+    const doc = read(path.join(FAMILY_ROOT, sp.dir, 'CLAUDE.md')) ?? ''
+    const m = doc.match(/<!-- loiter-family-rules:start[^>]*-->\n([\s\S]*?)\n<!-- loiter-family-rules:end -->/)
+    const problem = !m ? ['no family-rules block — run node tools/sync-family-rules.mjs']
+      : m[1].trim() !== master ? ['family rules differ from tools/family-rules.md — run node tools/sync-family-rules.mjs']
+      : []
+    row(sp.dir, 'CLAUDE.md family rules', problem)
+  }
 }
 
 // ── Content ──────────────────────────────────────────────────────────────────
