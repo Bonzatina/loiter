@@ -1101,3 +1101,7 @@ gyermekvasut.hu убран из `web/src/about/rural.ts`; в списке Буд
 ## [2026-09-23] feat | Балатон и Задунавье: Ёршег
 
 Сайт `balaton` в `web/src/cities.ts` обслуживает также `orseg`; центр карты сдвинут на запад, [47.15, 17.45]. Указатель `wiki_rural_travel` передвинут; в `web/src/about/rural.ts` — 11 новых доменов.
+
+## [2026-09-23] feat | Хайдушаг и Кисуце
+
+В `web/src/cities.ts` сайт alfold обслуживает также `hajdusag`, сайт spis-rudohorie — `kysuce`. В `web/src/map-routes.ts` — линия исторической лесной зигзагообразной дороги (Кубатковия — Хмура — Седло Бескид), смыкающаяся с оравской. Указатель `wiki_rural_travel` передвинут; в `web/src/about/rural.ts` — 7 новых доменов.

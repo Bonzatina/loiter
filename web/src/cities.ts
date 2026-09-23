@@ -295,7 +295,7 @@ export const CITIES: City[] = [
     kind: 'rural',
     taxonomy: RURAL_TAXONOMY,
     routes: RURAL_ROUTES,
-    areas: ['stiavnicke-vrchy', 'banskobystricky', 'gemer', 'spiš', 'šariš', 'zemplín', 'abaujtorna', 'liptov', 'orava', 'turiec'],
+    areas: ['stiavnicke-vrchy', 'banskobystricky', 'gemer', 'spiš', 'šariš', 'zemplín', 'abaujtorna', 'liptov', 'orava', 'turiec', 'kysuce'],
     brand: 'Loiter: Спиш и Словацкое Рудогорье',
     name: { ru: 'Спиш и Словацкое Рудогорье', en: 'Spiš & the Slovak Ore Mountains' },
     center: [48.8200, 20.3500],
@@ -316,7 +316,7 @@ export const CITIES: City[] = [
     // The plain between and beside the rivers, the Danube valley south of Budapest
     // (Dél-Duna: Ráckeve, Dunaújváros, Paks) included. The Mátra and the Bükk are
     // mountains and moved to the Northern Uplands.
-    areas: ['kiskunság', 'tiszavidék', 'hortobágy', 'del-duna', 'del-alfold', 'koros-maros', 'szatmar-bereg'],
+    areas: ['kiskunság', 'tiszavidék', 'hortobágy', 'del-duna', 'del-alfold', 'koros-maros', 'szatmar-bereg', 'hajdusag'],
     brand: 'Loiter: Большая равнина',
     name: { ru: 'Большая равнина', en: 'Great Plain' },
     center: [47.2000, 20.6700],
