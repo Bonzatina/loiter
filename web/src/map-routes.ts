@@ -34,4 +34,5 @@ export const RURAL_ROUTES: RouteLine[] = [
   { slug: 'Balatonfenyves-kisvaut',         type: 'railway', terminus: 'Somogyszentpál', points: [[46.71284, 17.48233], [46.64162, 17.47394]] },
   { slug: 'Ciernohronska-zeleznica',        type: 'railway', terminus: 'Hronec',         points: [[48.74546, 19.66005], [48.80233, 19.57500]] },
   { slug: 'Matrai-kisvasut',                type: 'railway', terminus: 'Mátrafüred',     points: [[47.78412, 19.93347], [47.78946, 19.93756], [47.79785, 19.94497], [47.80594, 19.95114], [47.81284, 19.95877], [47.82701, 19.97130], [47.83064, 19.97070]] },
+  { slug: 'Oravska-lesna-zeleznica',        type: 'railway', terminus: 'Sedlo Beskyd',   points: [[49.38546, 19.16147], [49.38728, 19.15164], [49.38914, 19.14952], [49.38907, 19.14377], [49.38874, 19.13253], [49.39016, 19.12789]] },
 ]
