@@ -65,6 +65,17 @@ export const LEGEND_TYPES: Record<string, string> = {
 }
 
 /**
+ * Every value a page's `domain:` may take, in any subproject. Only the ones in
+ * DOMAIN_COLOR change a marker; the rest (architecture, history, …) are topical and
+ * leave a place in the `sights` bucket. Checked by `npm run check`: a value outside
+ * this list is a typo or a private dialect, and the map silently treats it as sights.
+ */
+export const DOMAIN_VOCABULARY = [
+  'architecture', 'history', 'museums', 'sights', 'lookout', 'nature', 'religion',
+  'cuisine', 'culture', 'people', 'heraldry', 'practical', 'thermal', 'transport',
+] as const
+
+/**
  * The legend for one site: its taxonomy's structural buttons, then `sights`, then
  * the domains it actually has objects for, in the canonical LEGEND_TYPES order.
  * A city with no thermal baths simply never lists `thermal` and the button does

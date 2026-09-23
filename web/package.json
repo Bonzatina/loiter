@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "tsx src/server.ts",
-    "check": "tsx src/content-check.ts",
+    "check": "tsx src/content-check.ts && tsx src/family-check.ts",
+    "check:family": "tsx src/family-check.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

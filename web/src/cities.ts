@@ -331,6 +331,14 @@ export const CITIES: City[] = [
 export const contentRoot = (city: City): string =>
   path.join(FAMILY_ROOT, city.dir, 'wiki')
 
+/**
+ * The subproject whose standalone engine (`{dir}/web`) every other one is held to
+ * by `npm run check`. Not a city constant in the engine sense — nothing renders it;
+ * it only tells the family check which copy is the pattern. Move it when a fix lands
+ * somewhere else first, and bring the rest up to it.
+ */
+export const ENGINE_REFERENCE_DIR = 'wiki_viena'
+
 /** Where this city's images live — served at /{slug}/assets. */
 export const assetsRoot = (city: City): string =>
   path.join(FAMILY_ROOT, city.dir, 'web', 'assets')

@@ -459,6 +459,17 @@ changes.
 
 ## Working Here
 
+- **The family is held to one shape by `npm run check`** — its second half,
+  `web/src/family-check.ts` (`npm run check:family`, `-- --all` for every offender).
+  Three parts: every city's standalone `web/` must equal the reference engine
+  (`ENGINE_REFERENCE_DIR` in `cities.ts`, now `wiki_viena`) once its own data is masked,
+  and the rural engine's taxonomy-free files likewise; named **probes** for features every
+  standalone engine must have (single title, working cache watch, notes, image cap, …);
+  and **content conventions** — sources only on the about page (no source sections, no
+  source pages, no «По данным [сайт]»), every host cited as a source present in both
+  about lists, the original name in every map object's title, `fame` on every city place,
+  `domain:` from `DOMAIN_VOCABULARY`, wikilinks that resolve. A fix to one standalone
+  engine is done in all of them in the same sweep, or the check says so.
 - **Proofreading has a skill**: `/proofread` (`.claude/skills/proofread/`). Use it on any
   subproject whose pages were written fast or have never been re-read. It carries the
   order of work, three checks and — more usefully — the ledger of defects this author
