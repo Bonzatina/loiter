@@ -264,11 +264,27 @@ const CYRILLIC = /[А-Яа-яЁё]/
 const LATIN = /[A-Za-zÀ-ɏ]/
 const SOURCE_HEADING = /^#{1,6}\s*(Источники?|Sources?)\s*$/m
 
+/**
+ * The text of a source section, or null. A heading alone is not enough: «## Источник»
+ * is also a holy spring (Heiligenbrunn). A source section is one whose body is a list
+ * of references — every non-empty line an item carrying a URL or a wikilink.
+ */
+function sourceSection(body: string): string | null {
+  const at = body.search(SOURCE_HEADING)
+  if (at < 0) return null
+  const rest = body.slice(at)
+  const end = rest.slice(1).search(/\n#{1,6}\s/)
+  const section = end >= 0 ? rest.slice(0, end + 1) : rest
+  const lines = section.split('\n').slice(1).map(l => l.trim()).filter(Boolean)
+  return lines.length && lines.every(l => /^[-*] /.test(l) && /https?:\/\/|\[\[/.test(l)) ? section : null
+}
+
 /** Words after «According to» that attribute to nobody in particular. */
 const NOT_A_SOURCE = new Set([
   'tradition', 'legend', 'legends', 'local', 'some', 'many', 'one', 'other', 'another', 'his',
   'her', 'their', 'its', 'this', 'that', 'these', 'those', 'popular', 'most', 'official',
   'contemporary', 'early', 'later', 'sources', 'records', 'estimates', 'a', 'an', 'folk',
+  'historical', 'inventories', 'surveys', 'census', 'tradition'
 ])
 
 function attributions(d: Doc): string[] {
@@ -298,11 +314,8 @@ function citedHosts(sp: Subproject, docs: Doc[]): Map<string, string> {
     }
   }
   for (const d of docs) {
-    const at = d.body.search(SOURCE_HEADING)
-    if (at < 0) continue
-    const rest = d.body.slice(at)
-    const end = rest.slice(1).search(/\n#{1,6}\s/)       // up to the next heading
-    add(end >= 0 ? rest.slice(0, end + 1) : rest, d.rel)
+    const section = sourceSection(d.body)
+    if (section) add(section, d.rel)
   }
   const srcDir = path.join(sp.wiki, 'sources')
   if (fsSync.existsSync(srcDir)) {
@@ -374,7 +387,7 @@ async function checkContent(): Promise<void> {
       if (/sources/i.test(f) && f.endsWith('.md')) leftovers.push(`wiki/${f}`)
     }
     row(sp.dir, 'no source pages', leftovers)
-    row(sp.dir, 'no source sections', docs.filter(d => SOURCE_HEADING.test(d.body)).map(d => d.rel))
+    row(sp.dir, 'no source sections', docs.filter(d => sourceSection(d.body)).map(d => d.rel))
     row(sp.dir, 'no inline attribution', docs.flatMap(d => attributions(d).map(a => `${d.rel}: «${a.trim()}»`)))
 
     // The about lists must name every host cited anywhere — the subproject's own

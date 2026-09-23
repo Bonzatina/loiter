@@ -67,14 +67,11 @@ export const RURAL_TAXONOMY: Taxonomy = {
   subareaField: 'subregion',
   areaType: 'region',
   subareaType: 'settlement',
-  // Deliberately WITHOUT `sources/`: unlike the cities, the rural wiki keeps a
-  // page per source — 400 of them. Its own app loads them and then renders them
-  // in no section at all, so they only ever bloated the payload. Not reading the
-  // directory changes nothing a reader can see.
+  // No `sources/`: the rural wiki kept a page per source until 2026-09-23 and now,
+  // like the cities, keeps sources as rows of its index table.
   flatDirs: ['regions', 'concepts', 'people'],
-  // `raw/` holds 20 `type: article` pages that the rural engine's own flat list
-  // does not include either, so they are invisible there too — surfacing them here
-  // would show pages the subproject itself never shows. `topics/` is empty.
+  // Named so a `sources/` or `raw/` that ever reappears is skipped rather than
+  // probed as a region. `topics/` is empty.
   ignoreDirs: ['sources', 'raw', 'topics'],
   typeDirs: ['settlements', 'places', 'railways', 'ferries'],
   routeTypes: ['railway', 'ferry'],

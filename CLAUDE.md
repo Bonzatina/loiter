@@ -69,9 +69,10 @@ templates. Adding a third geography means an entry in `taxonomy.ts`, not an `if`
 The taxonomy also carries `flatDirs`, `ignoreDirs`, `typeDirs`, the two page types
 (`areaType`/`subareaType`), the `routeTypes` the `transport` legend button filters, and the
 UI keys for the list headings. `ignoreDirs` matters: an unlisted top-level directory is
-otherwise **treated as an area** and probed for `typeDirs`, so the rural wiki's `sources/`
-(400 provenance pages its own app renders in no section) and `raw/` are named explicitly
-rather than left to luck.
+otherwise **treated as an area** and probed for `typeDirs`, so `sources/` and `raw/` are
+named explicitly rather than left to luck. (The rural wiki kept 400 source pages in
+`sources/` until 2026-09-23; every wiki now keeps sources as rows of its `index.md` table,
+and the family check fails on a source page anywhere under `wiki/`.)
 
 `kind: 'city' | 'rural'` is separate from the taxonomy and only affects presentation: the
 picker and the switcher group by it so the rural wiki is not offered as a sixth city.
