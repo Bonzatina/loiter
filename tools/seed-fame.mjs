@@ -115,7 +115,52 @@ const boxDeg = (box.neLat - box.swLat) * (box.neLon - box.swLon)
 fs.mkdirSync(CACHE, { recursive: true })
 const cacheFile = path.join(CACHE, `${site}-${lang}.json`)
 
+// A city the size of Berlin is one query too many for the public endpoint: a 0.2°
+// box times out (HTTP 504). Large boxes are cut into tiles of at most TILE degrees a
+// side and fetched one after another; an item seen in two tiles is kept once.
+const TILE = 0.1
+
 async function fetchItems() {
+  const latSteps = Math.ceil((box.neLat - box.swLat) / TILE)
+  const lonSteps = Math.ceil((box.neLon - box.swLon) / TILE)
+  const byQid = new Map()
+  for (let i = 0; i < latSteps; i++) {
+    for (let j = 0; j < lonSteps; j++) {
+      const tile = {
+        swLat: box.swLat + i * TILE, swLon: box.swLon + j * TILE,
+        neLat: Math.min(box.neLat, box.swLat + (i + 1) * TILE),
+        neLon: Math.min(box.neLon, box.swLon + (j + 1) * TILE),
+      }
+      if (latSteps * lonSteps > 1) process.stdout.write(`  tile ${i * lonSteps + j + 1}/${latSteps * lonSteps}… `)
+      const got = await fetchAdaptive(tile)
+      for (const it of got) if (!byQid.has(it.qid)) byQid.set(it.qid, it)
+      if (latSteps * lonSteps > 1) console.log(`${got.length} items`)
+    }
+  }
+  return [...byQid.values()]
+}
+
+// A city centre can still be too dense for one tile: split it into quarters and
+// try again, down to a sixteenth of a tile.
+async function fetchAdaptive(tile, depth = 0) {
+  try {
+    return await fetchTile(tile, depth < 2 ? 3 : 1)
+  } catch (err) {
+    if (depth >= 2 || !/HTTP 50[234]/.test(String(err))) throw err
+    const midLat = (tile.swLat + tile.neLat) / 2, midLon = (tile.swLon + tile.neLon) / 2
+    const quarters = [
+      { swLat: tile.swLat, swLon: tile.swLon, neLat: midLat, neLon: midLon },
+      { swLat: tile.swLat, swLon: midLon, neLat: midLat, neLon: tile.neLon },
+      { swLat: midLat, swLon: tile.swLon, neLat: tile.neLat, neLon: midLon },
+      { swLat: midLat, swLon: midLon, neLat: tile.neLat, neLon: tile.neLon },
+    ]
+    const out = []
+    for (const q of quarters) out.push(...await fetchAdaptive(q, depth + 1))
+    return out
+  }
+}
+
+async function fetchTile(box, tries = 3) {
   // Aliases matter as much as labels. Wikidata calls the Blue Church by its official
   // name, `Kostol svätej Alžbety`; `Modrý kostolík` — what everyone including this
   // wiki actually calls it — is only an altLabel. Without aliases the most recognisable
@@ -152,6 +197,10 @@ SELECT ?item ?label (GROUP_CONCAT(DISTINCT ?name; separator="|") AS ?names) ?lat
     },
     body: query,
   })
+  if ((res.status >= 502 || res.status === 429) && tries > 1) {
+    await new Promise(r => setTimeout(r, 5000))
+    return fetchTile(box, tries - 1)
+  }
   if (!res.ok) throw new Error(`WDQS HTTP ${res.status}: ${(await res.text()).slice(0, 200)}`)
   const json = await res.json()
   return json.results.bindings.map(b => ({
