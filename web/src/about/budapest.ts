@@ -60,6 +60,7 @@ export const budapestAbout: AboutData = {
     { domain: 'fokert.budapestikozmuvek.hu',  ru: 'Городское садово-парковое управление',                       en: 'Budapest parks and gardens authority' },
     { domain: 'bpxv.hu',                      ru: 'Сайт XV района',                                             en: 'District XV municipality' },
     { domain: 'rakoscsaba.plebania.hu',       ru: 'Приход Ракошчабы',                                           en: 'Rákoscsaba parish' },
+    { domain: 'matyasfoldi-plebania.hu',      ru: 'Приход Матяшфёльда',                                        en: 'Mátyásföld parish' },
     { domain: 'csepelimunkasotthon.hu',       ru: 'Чепельский рабочий дом',                                     en: 'Csepel Workers’ Home' },
     { domain: 'rakospalotaimuzeum.hu',        ru: 'Музей Ракошпалоты',                                          en: 'Rákospalota Museum' },
     { domain: 'lexikon.katolikus.hu',         ru: 'Венгерский католический лексикон',                           en: 'Hungarian Catholic Lexicon' },
