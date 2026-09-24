@@ -226,13 +226,15 @@ export const CITIES: City[] = [
     routes: RURAL_ROUTES,
     // The Danube Bend proper and the Pilis — together the Duna–Ipoly National Park. It
     // once also held Tata, Lake Velence, the Danube south of Budapest and the Gödöllő
-    // Hills, which lie on four sides of the capital and are none of them the Bend.
+    // Hills, which lie on four sides of the capital and are none of them the Bend; and
+    // until 2026-09-24 its folders still carried the towns north-east of Budapest (now
+    // gödöllői-dombság) and the Buda Hills with the Zsámbék Basin (now budai-hegyseg).
     areas: ['dunakanyar', 'pilis'],
     brand: 'Loiter: Излучина Дуная',
     name: { ru: 'Излучина Дуная', en: 'Danube Bend' },
-    center: [47.6837, 18.9664],
+    center: [47.8216, 18.9371],
     zoom: 10,
-    stateKey: 'dunakanyar_map_state_v2',
+    stateKey: 'dunakanyar_map_state_v3',
     timezone: 'Europe/Budapest',
     districtLabel: 'Регион',
     // Museums and thermal baths were invisible on the rural map before: its own
@@ -267,8 +269,9 @@ export const CITIES: City[] = [
     kind: 'rural',
     taxonomy: RURAL_TAXONOMY,
     routes: RURAL_ROUTES,
-    // Tata (Gerecse) and Lake Velence are Transdanubia too, and belong here.
-    areas: ['balaton', 'bakony', 'kisalföld', 'gerecse', 'velence', 'orseg'],
+    // Tata (Gerecse), Lake Velence and the Buda Hills with the Zsámbék Basin are
+    // Transdanubia too, and belong here.
+    areas: ['balaton', 'bakony', 'kisalföld', 'gerecse', 'velence', 'orseg', 'budai-hegyseg'],
     brand: 'Loiter: Балатон и Задунавье',
     name: { ru: 'Балатон и Задунавье', en: 'Balaton & Transdanubia' },
     center: [47.1535, 17.4500],
@@ -341,7 +344,7 @@ export const CITIES: City[] = [
     areas: ['mátra', 'bükk', 'novohrad', 'gödöllői-dombság', 'tokaj-hegyalja', 'aggteleki-karszt'],
     brand: 'Loiter: Северное среднегорье',
     name: { ru: 'Северное среднегорье', en: 'Northern Uplands' },
-    center: [47.9500, 20.4800],
+    center: [47.9460, 20.3576],
     zoom: 9,
     stateKey: 'matra_bukk_map_state_v1',
     timezone: 'Europe/Budapest',

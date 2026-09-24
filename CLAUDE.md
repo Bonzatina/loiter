@@ -90,7 +90,7 @@ therefore name the area folders it covers, and the loader serves only those:
 |---|---|---|
 | Излучина Дуная | `dunakanyar` | dunakanyar, pilis |
 | Малые Карпаты и Бургенланд | `male-karpaty` | podunajsko, záhorie, male-karpaty, považie, ponitrie, burgenland, römerland |
-| Балатон и Задунавье | `balaton` | balaton, bakony, kisalföld, gerecse, velence, orseg |
+| Балатон и Задунавье | `balaton` | balaton, bakony, kisalföld, gerecse, velence, orseg, budai-hegyseg |
 | Южное Задунавье | `del-dunantul` | mecsek, villanyi-hegyseg, zselic, ormansag |
 | Спиш и Словацкое Рудогорье | `spis-rudohorie` | stiavnicke-vrchy, banskobystricky, gemer, spiš, šariš, zemplín, abaujtorna, liptov, orava, turiec, kysuce |
 | Большая равнина | `alfold` | kiskunság, tiszavidék, hortobágy, del-duna, del-alfold, koros-maros, szatmar-bereg, hajdusag |
@@ -118,7 +118,18 @@ the Villány hills, the Zselic, the Ormánság) is its own landscape between Bal
 Drava, not a southern annex of Balaton, and got its own site on 2026-09-23; the Őrség, at
 Transdanubia's western edge, stays with Balaton. The north-Slovak valleys (Liptov, Orava,
 Turiec, Kysuce) joined the Slovak uplands site, and the eastern plain (Hajdúság,
-Szatmár–Bereg, Körös–Maros, the southern Alföld) the Great Plain. A new area goes to the
+Szatmár–Bereg, Körös–Maros, the southern Alföld) the Great Plain.
+
+Regrouping areas was not enough, because the Bend's own **folders** had grown past it: on
+2026-09-24 a third of the Danube Bend site's objects stood outside the Bend. The towns
+north-east of Budapest (Fót, Mogyoród, Veresegyház, Vácrátót, Csővár, Göd, Dunakeszi)
+moved from `dunakanyar/` to `gödöllői-dombság/`; the Buda Hills and the Zsámbék Basin
+(Budakeszi, Máriaremete, Zsámbék, Biatorbágy, Etyek …) left `pilis/` for a new area,
+`budai-hegyseg`, on the Transdanubia site; Martonvásár went to `velence/`, Érd to
+`del-duna/`. Page slugs did not change, so no link or URL moved with them. Solymár,
+Piliscsaba and Budakalász, on the seam between the Pilis and the Buda side, stayed with the
+Bend. When a subproject adds a place, the folder it goes into decides which site shows it,
+so the folder has to be as honest as the cluster. A new area goes to the
 cluster whose landscape it belongs to, not to whichever map it happens to fit — and it has
 to be added there: an area folder listed in no `areas` is served by no site, and
 `npm run check` reports it.

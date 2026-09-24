@@ -37,7 +37,7 @@ export const ruralAbout: AboutData = {
     { domain: 'sk.wikipedia.org',          ru: 'Словацкая Википедия',                                             en: 'Slovak Wikipedia' },
     { domain: 'nagymaros.hu',              ru: 'Официальный сайт Надьмароша',                                     en: 'Official website of Nagymaros' },
     { domain: 'zsambek.hu',                ru: 'Официальный сайт Жамбека',                                        en: 'Official website of Zsámbék' },
-    { domain: 'zsambekinfo.hu',            ru: 'Туристическая ассоциация Жамбекского котлована',                  en: 'Tourist association of the Zsámbék Basin' },
+    { domain: 'zsambekinfo.hu',            ru: 'Туристическая ассоциация Жамбекской котловины',                  en: 'Tourist association of the Zsámbék Basin' },
     { domain: 'nagymarosiplebania.hu',     ru: 'Сайт прихода Надьмароша',                                         en: 'Nagymaros parish website' },
     { domain: 'esztergom.hu',              ru: 'Официальный сайт Эстергома',                                      en: 'Official website of Esztergom' },
     { domain: 'oroszlany.hu',              ru: 'Официальный сайт Орослани',                                       en: 'Official website of Oroszlány' },
