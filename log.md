@@ -1132,3 +1132,7 @@ gyermekvasut.hu убран из `web/src/about/rural.ts`; в списке Буд
 ## [2026-09-24] content | Göcsej filled
 
 Pointer for `wiki_rural_travel` to move after its Göcsej ingest: 9 settlements, 10 places, the Hetés subregion page and a Zala folk-architecture concept in `gocsej` (balaton site). Fourteen new source domains in `web/src/about/rural.ts`. `npm run check` clean.
+
+## [2026-09-24] content | Inner Somogy and Ormánság filled
+
+Pointer for `wiki_rural_travel` to move after its Drava ingest: 13 objects in `belso-somogy` and 6 in `ormansag`, both on the del-dunantul site, which goes from 44 to 63 mapped objects. Twenty-four new source domains in `web/src/about/rural.ts`. `npm run check` clean.
