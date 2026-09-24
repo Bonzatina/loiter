@@ -90,8 +90,8 @@ therefore name the area folders it covers, and the loader serves only those:
 |---|---|---|
 | Излучина Дуная | `dunakanyar` | dunakanyar, pilis |
 | Малые Карпаты и Бургенланд | `male-karpaty` | podunajsko, záhorie, male-karpaty, považie, ponitrie, burgenland, römerland |
-| Балатон и Задунавье | `balaton` | balaton, bakony, kisalföld, gerecse, velence, orseg, budai-hegyseg |
-| Южное Задунавье | `del-dunantul` | mecsek, villanyi-hegyseg, zselic, ormansag |
+| Балатон и Задунавье | `balaton` | balaton, bakony, kisalföld, gerecse, velence, orseg, budai-hegyseg, gocsej |
+| Южное Задунавье | `del-dunantul` | mecsek, villanyi-hegyseg, zselic, ormansag, belso-somogy |
 | Спиш и Словацкое Рудогорье | `spis-rudohorie` | stiavnicke-vrchy, banskobystricky, gemer, spiš, šariš, zemplín, abaujtorna, liptov, orava, turiec, kysuce |
 | Большая равнина | `alfold` | kiskunság, tiszavidék, hortobágy, del-duna, del-alfold, koros-maros, szatmar-bereg, hajdusag |
 | Северное среднегорье | `matra-bukk` | mátra, bükk, novohrad, gödöllői-dombság, tokaj-hegyalja, aggteleki-karszt |

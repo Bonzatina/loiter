@@ -270,8 +270,8 @@ export const CITIES: City[] = [
     taxonomy: RURAL_TAXONOMY,
     routes: RURAL_ROUTES,
     // Tata (Gerecse), Lake Velence and the Buda Hills with the Zsámbék Basin are
-    // Transdanubia too, and belong here.
-    areas: ['balaton', 'bakony', 'kisalföld', 'gerecse', 'velence', 'orseg', 'budai-hegyseg'],
+    // Transdanubia too, and belong here; so is Göcsej, the Zala hills east of the Őrség.
+    areas: ['balaton', 'bakony', 'kisalföld', 'gerecse', 'velence', 'orseg', 'budai-hegyseg', 'gocsej'],
     brand: 'Loiter: Балатон и Задунавье',
     name: { ru: 'Балатон и Задунавье', en: 'Balaton & Transdanubia' },
     center: [47.1535, 17.4500],
@@ -355,19 +355,20 @@ export const CITIES: City[] = [
   },
   {
     // Dél-Dunántúl, Southern Transdanubia: the Mecsek and Pécs, the Villány hills
-    // with Siklós and Harkány, and the Zselic with Kaposvár and Szigetvár. Its own
-    // landscape between Lake Balaton and the Drava — not a southern annex of Balaton.
+    // with Siklós and Harkány, the Zselic with Kaposvár and Szigetvár, and the sandy
+    // forests of Inner Somogy (Belső-Somogy) towards Barcs. Its own landscape between
+    // Lake Balaton and the Drava — not a southern annex of Balaton.
     slug: 'del-dunantul',
     dir: 'wiki_rural_travel',
     kind: 'rural',
     taxonomy: RURAL_TAXONOMY,
     routes: RURAL_ROUTES,
-    areas: ['mecsek', 'villanyi-hegyseg', 'zselic', 'ormansag'],
+    areas: ['mecsek', 'villanyi-hegyseg', 'zselic', 'ormansag', 'belso-somogy'],
     brand: 'Loiter: Южное Задунавье',
     name: { ru: 'Южное Задунавье', en: 'Southern Transdanubia' },
-    center: [46.1000, 18.2000],
-    zoom: 10,
-    stateKey: 'del_dunantul_map_state_v1',
+    center: [46.1000, 17.9500],
+    zoom: 9,
+    stateKey: 'del_dunantul_map_state_v2',
     timezone: 'Europe/Budapest',
     districtLabel: 'Регион',
     domains: ['museums', 'nature', 'thermal', 'lookout', 'transport'],
