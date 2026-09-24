@@ -1128,3 +1128,7 @@ gyermekvasut.hu убран из `web/src/about/rural.ts`; в списке Буд
 ## [2026-09-24] feat | Twelve more narrow-gauge lines; Göcsej and Inner Somogy
 
 `wiki_rural_travel` gained pages for twelve operating narrow-gauge railways and two new areas. In `web/src/cities.ts` the balaton site now serves `gocsej` (Zala hills, Lenti — the Csömödér forest railway) and del-dunantul serves `belso-somogy` (Kaszó, Lake Baláta, which moved there from `balaton/`); the del-dunantul centre moved west to [46.10, 17.95], zoom 9, key `_v2`, so Kaszó is on the first screen. `web/src/map-routes.ts` (and the subproject's `constants.ts`) draw all twelve from OSM track geometry, routed station to station and simplified at 25 m: Lillafüred (Miskolc — Garadna), Szilvásvárad, Felsőtárkány, Pálháza — Rostalló, Zsuzsi (Debrecen — Hármashegyalja), Gemenc (Pörböly — Malomtelelő, the section run in 2026), Nagycenk — Fertőboz, Vál valley, Csömödér (Lenti — Csömödér — Kistolmács), Košice children's railway, TREŽ (its OSM track stops ~500 m short of Trenčianska Teplá station), Kaszó — Baláta. Sixteen new source domains in `web/src/about/rural.ts`. `npm run check` clean.
+
+## [2026-09-24] content | Göcsej filled
+
+Pointer for `wiki_rural_travel` to move after its Göcsej ingest: 9 settlements, 10 places, the Hetés subregion page and a Zala folk-architecture concept in `gocsej` (balaton site). Fourteen new source domains in `web/src/about/rural.ts`. `npm run check` clean.
