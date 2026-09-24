@@ -23,7 +23,7 @@ export const NO_ROUTES: RouteLine[] = []
 /** Carried over verbatim from wiki_rural_travel/web/src/constants.ts. */
 export const RURAL_ROUTES: RouteLine[] = [
   { slug: 'Királyréti Erdei Vasút',         type: 'railway', terminus: 'Királyrét',      points: [[47.8266, 19.0129], [47.8680, 19.0061], [47.8939, 18.9791]] },
-  { slug: 'Kemencei Erdei Múzeumvasút',     type: 'railway', terminus: 'Feketevölgy',    points: [[48.0171, 18.8916], [47.9817, 18.8966]] },
+  { slug: 'Kemencei Erdei Múzeumvasút',     type: 'railway', terminus: 'Feketevölgy',    points: [[48.01330, 18.89416], [47.9817, 18.8966]] },
   { slug: 'Nagybörzsönyi Erdei Vasút',      type: 'railway', terminus: 'Szob',           points: [[47.93166, 18.83734], [47.8998, 18.8837], [47.82198, 18.86081]] },
   { slug: 'Visegrád-Nagymaros komp',        type: 'ferry',   terminus: 'Nagymaros',      points: [[47.78944, 18.96097], [47.78696, 18.96718]] },
   { slug: 'Szentendre-Szigetmonostor komp', type: 'ferry',   terminus: 'Szigetmonostor', points: [[47.67061, 19.07929], [47.66994, 19.08230]] },

@@ -160,6 +160,11 @@ function resolveDomainColor(domain) {
   return null
 }
 
+// A page with a route line is drawn by the line's end markers. Its own coords marker
+// would sit on one of them (a railway's first station) or mid-river (a ferry), so it
+// is kept off the map; the coords still place the page in the list and the selection.
+const routeSlugs = new Set(routes.map(r => r.slug))
+
 const markerObjects = mappable.map(p => {
   const domainColor = p.type === 'place' ? resolveDomainColor(p.domain) : null
   const color = domainColor || colors[p.type] || '#666'
@@ -167,12 +172,12 @@ const markerObjects = mappable.map(p => {
     radius: markerRadius(p),
     color, fillColor: color, fillOpacity: 0.8, weight: 1.5,
   })
-  .addTo(map)
   .bindPopup(
     `<strong>${pageTitle(p)}</strong><br>` +
     `<small>${p.type}${p.subarea ? ' · ' + p.subarea : ''}</small><br>` +
     `<a href="${wikiBase}/${encodeURIComponent(p.slug)}">${ui.open}</a>`
   )
+  if (!routeSlugs.has(p.slug)) marker.addTo(map)
   return { marker, page: p, baseColor: color }
 })
 
