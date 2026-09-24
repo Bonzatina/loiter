@@ -201,9 +201,9 @@ export const CITIES: City[] = [
     cardImage: 'stephansdom.jpg',
     about: viennaAbout,
   },
-  // ── The rural wiki, presented as six landscapes ────────────────────────────
+  // ── The rural wiki, presented as seven landscapes ────────────────────────────
   //
-  // One repository, one history, one standalone app — six sites here. It spans
+  // One repository, one history, one standalone app — seven sites here. It spans
   // 377 km east to west and 257 north to south, and a single map could not show it:
   // at the old starting view 413 of its 772 mapped objects were off screen, Balaton
   // (113) and Burgenland (80) among them. Splitting the presentation gives each
@@ -214,7 +214,7 @@ export const CITIES: City[] = [
   // splitting by modern border would contradict the subproject's own premise, which
   // is cultural continuity across them.
   //
-  // `concepts/` and `people/` are cross-region and shared by all six: a note on
+  // `concepts/` and `people/` are cross-region and shared by all seven: a note on
   // timber framing belongs to every landscape it appears in.
   //
   // Centres and zooms are computed from each cluster's own content, not guessed.

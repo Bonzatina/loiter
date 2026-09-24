@@ -1,4 +1,4 @@
-1# Loiter — Schema of the Combined Site
+# Loiter — Schema of the Combined Site
 
 The **Loiter** family root. This directory holds one aggregator web app plus the city
 wiki subprojects it draws content from. The aggregator serves every city from a
@@ -33,10 +33,12 @@ Loiter/
 │   ├── scripts/map.js          ← shared Leaflet client; no city constants inside
 │   ├── styles/                 ← shared CSS (shared / map / detail / about / cities)
 │   └── assets/                 ← aggregator's own images only (logo, city cards)
+├── tools/                      ← family maintenance scripts, run from this root (see Working Here)
 ├── wiki_berlin/                ← city subproject — git submodule, never edited here
 ├── wiki_bratislava/            ← city subproject
 ├── wiki_budapest/              ← city subproject
 ├── wiki_dresden/               ← city subproject
+├── wiki_viena/                 ← city subproject (Vienna; also the reference engine)
 ├── wiki_wroclav/               ← city subproject
 └── wiki_rural_travel/          ← the rural wiki — a second taxonomy, see below
 ```
@@ -75,27 +77,28 @@ named explicitly rather than left to luck. (The rural wiki kept 400 source pages
 and the family check fails on a source page anywhere under `wiki/`.)
 
 `kind: 'city' | 'rural'` is separate from the taxonomy and only affects presentation: the
-picker and the switcher group by it so the rural wiki is not offered as a sixth city.
+picker and the switcher group by it so the rural wiki is not offered as a seventh city.
 
 ### One subproject, several sites — `areas`
 
-The rural wiki is served as **six sites**, not one. It spans 377 km east to west and
-257 north to south; at the single starting view it once had, 413 of its 772 mapped
-objects were off screen, Balaton (113 objects) and Burgenland (80) among them. A registry
-entry may therefore name the area folders it covers, and the loader serves only those:
+The rural wiki is served as **seven sites**, not one. It spans well over 500 km east to
+west; at the single starting view it once had, 413 of its then 772 mapped objects were off
+screen, Balaton (113 objects) and Burgenland (80) among them. A registry entry may
+therefore name the area folders it covers, and the loader serves only those:
 
 | Site | Slug | Areas |
 |---|---|---|
 | Излучина Дуная | `dunakanyar` | dunakanyar, pilis |
 | Малые Карпаты и Бургенланд | `male-karpaty` | podunajsko, záhorie, male-karpaty, považie, ponitrie, burgenland, römerland |
-| Балатон и Задунавье | `balaton` | balaton, bakony, kisalföld, gerecse, velence |
-| Спиш и Словацкое Рудогорье | `spis-rudohorie` | stiavnicke-vrchy, banskobystricky, gemer, spiš, šariš, zemplín, abaujtorna |
-| Большая равнина | `alfold` | kiskunság, tiszavidék, hortobágy, del-duna |
-| Северное среднегорье | `matra-bukk` | mátra, bükk, novohrad, gödöllői-dombság |
+| Балатон и Задунавье | `balaton` | balaton, bakony, kisalföld, gerecse, velence, orseg |
+| Южное Задунавье | `del-dunantul` | mecsek, villanyi-hegyseg, zselic, ormansag |
+| Спиш и Словацкое Рудогорье | `spis-rudohorie` | stiavnicke-vrchy, banskobystricky, gemer, spiš, šariš, zemplín, abaujtorna, liptov, orava, turiec, kysuce |
+| Большая равнина | `alfold` | kiskunság, tiszavidék, hortobágy, del-duna, del-alfold, koros-maros, szatmar-bereg, hajdusag |
+| Северное среднегорье | `matra-bukk` | mátra, bükk, novohrad, gödöllői-dombság, tokaj-hegyalja, aggteleki-karszt |
 
 The repository is untouched by this: one `dir`, one submodule pointer, one standalone app.
 Only the presentation is split. `concepts/` and `people/` are cross-region and shared by
-all six; the area overview pages in `regions/` follow their cluster. Route lines follow
+all seven; the area overview pages in `regions/` follow their cluster. Route lines follow
 whichever site serves their page — otherwise every site drew all ten, putting the Danube
 ferries on the Balaton map. **Wikilinks follow the site that serves their target**
 (`linkResolver` in `server.ts`): a concept shown on every site mentions places in every
@@ -109,7 +112,13 @@ is the Bend, and they lie on four sides of Budapest. Since 2026-09-23 the groupi
 physical geography: the Bend is the Duna–Ipoly National Park (dunakanyar, pilis); Tata and
 Velence are Transdanubia; the Danube valley south of Budapest is part of the Great Plain;
 the Mátra, the Bükk, Novohrad and the Gödöllő Hills are the Northern Uplands
-(Északi-középhegység), which the Great Plain site had wrongly held. A new area goes to the
+(Északi-középhegység), which the Great Plain site had wrongly held, together with Tokaj-Hegyalja
+and the Aggtelek Karst at their eastern end. Southern Transdanubia (Dél-Dunántúl: the Mecsek,
+the Villány hills, the Zselic, the Ormánság) is its own landscape between Balaton and the
+Drava, not a southern annex of Balaton, and got its own site on 2026-09-23; the Őrség, at
+Transdanubia's western edge, stays with Balaton. The north-Slovak valleys (Liptov, Orava,
+Turiec, Kysuce) joined the Slovak uplands site, and the eastern plain (Hajdúság,
+Szatmár–Bereg, Körös–Maros, the southern Alföld) the Great Plain. A new area goes to the
 cluster whose landscape it belongs to, not to whichever map it happens to fit — and it has
 to be added there: an area folder listed in no `areas` is served by no site, and
 `npm run check` reports it.
@@ -163,8 +172,8 @@ Notes on two of the fields:
   **Sources are per city and only per city.** `renderAboutPage(city | undefined, lang)`
   renders the shared prose either way; the source list appears only when a city is given.
   The project-level `/about` shows a city list in its place, because there is no city
-  context from which to choose sources. The shared prose is therefore rendered in six
-  places — deliberately: it is one text in one place in the code, and a reader who lands
+  context from which to choose sources. The shared prose is therefore rendered on every
+  about page, the project's and each site's — deliberately: it is one text in one place in the code, and a reader who lands
   on a city's about page should not have to go elsewhere to learn what the project is.
 
 Adding a site = one registry entry + one `src/about/` file + the submodule. No other code
@@ -225,7 +234,7 @@ remembered client-side so a return visit to `/` can offer it.
 
 **One city at a time — strictly.** The map, the list and the search always operate
 inside a single city's bounds, exactly as in the subprojects. There is no all-cities
-overview map and no cross-city search: the combined site is six city sites and six rural
+overview map and no cross-city search: the combined site is six city sites and seven rural
 ones sharing one engine, not one site about all of them. Serving ~950 objects to the client at once, and
 deciding what an intermediate zoom level should show, are problems this deliberately
 does not take on. `/` is the only page that knows about more than one city.
@@ -276,14 +285,14 @@ Two paths, same filesystem layout, so the code never branches:
   anyone in a hurry.
 
   The workflow does **not** check the submodules out. Only a SHA per city has to change,
-  and checking out to learn it would pull ~200 MB of photographs every night to write six
-  lines; `git ls-remote` answers the same question in six requests and
+  and checking out to learn it would pull ~200 MB of photographs every night to write seven
+  lines; `git ls-remote` answers the same question in seven requests and
   `git update-index --cacheinfo` writes the gitlink directly. Recording the branch tip
   also means a pointer can never fall behind its branch, which is the state that makes a
   `--depth 1` submodule fetch fail.
 
   It needs the **`SUBMODULE_TOKEN`** repository secret: a fine-grained PAT with
-  `Contents: Read` on the six subprojects, because they are private and the default
+  `Contents: Read` on the seven subprojects, because they are private and the default
   `GITHUB_TOKEN` is scoped to this repository alone. Pushing back needs nothing beyond
   `permissions: contents: write`. The commits are authored by `github-actions[bot]` — no
   person wrote them.
@@ -311,6 +320,7 @@ City repos (branch `main`, `master` for rural):
 | `wiki_budapest` | `Bonzatina/Loiter-budapest` |
 | `wiki_dresden` | `Bonzatina/Loiter-dresden` |
 | `wiki_wroclav` | `Bonzatina/Loiter-wroclav` |
+| `wiki_viena` | `Bonzatina/Loiter-viena` |
 | `wiki_rural_travel` | `Bonzatina/rural_travel` (branch `master`, not `main`) |
 
 **Image weight used to be the real constraint**, not the markdown. The `web/assets/`
@@ -491,6 +501,14 @@ changes.
   `node tools/sync-family-rules.mjs`. Change a shared rule there, sync, and commit the copies
   inside each subproject; the family check fails while any copy differs. A subproject's own
   sections cover only what is genuinely its own — its geography, its domains table, its app.
+- **`tools/`** holds the family's maintenance scripts. They are committed with this root,
+  run from it, take a subproject folder as argument and need nothing from `npm`:
+  `shrink-images.mjs` (after every ingest — see above), `seed-fame.mjs` (fame ratings for
+  city places), `sync-family-rules.mjs` with its source `family-rules.md`, and
+  `check-coords.mjs`, which lists pairs of markers closer than 0.003° — two pages of one
+  object, or a place pinned to its village centre (`node tools/check-coords.mjs
+  wiki_rural_travel`). Its list is to be read, not blindly fixed: a castle and its chapel
+  may genuinely stand that close.
 - **Proofreading has a skill**: `/proofread` (`.claude/skills/proofread/`). Use it on any
   subproject whose pages were written fast or have never been re-read. It carries the
   order of work, three checks and — more usefully — the ledger of defects this author
