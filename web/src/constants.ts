@@ -306,6 +306,14 @@ export const FEATURES = {
    * filtered.
    */
   fameSlider: false,
+
+  /**
+   * `/debug/rural`: every rural site on one map, drawn as the hull of its objects,
+   * to judge the clusters against each other. A development aid, never for readers —
+   * it breaks the one-site-at-a-time rule on purpose. Off here; turn it on locally
+   * with `DEBUG_SITES=on`.
+   */
+  debugSites: false,
 } as const
 
 /** `FAME_SLIDER=on|off` overrides the flag above; unset falls back to it. */
@@ -314,6 +322,14 @@ export function fameSliderEnabled(): boolean {
   if (env === 'on' || env === 'true' || env === '1') return true
   if (env === 'off' || env === 'false' || env === '0') return false
   return FEATURES.fameSlider
+}
+
+/** `DEBUG_SITES=on|off` overrides the flag above; unset falls back to it. */
+export function debugSitesEnabled(): boolean {
+  const env = (process.env.DEBUG_SITES ?? '').trim().toLowerCase()
+  if (env === 'on' || env === 'true' || env === '1') return true
+  if (env === 'off' || env === 'false' || env === '0') return false
+  return FEATURES.debugSites
 }
 
 /** Contact shown on the about page and used as the note mailto: fallback. */

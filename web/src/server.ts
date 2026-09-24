@@ -12,6 +12,8 @@ import { renderPage, renderDetailPage, renderAboutPage, renderCitiesPage } from 
 import { wikiPrefix, wikiUrl, assetsPrefix, citiesUrl } from './routes'
 import { notesEnabled, validateNote, sendNote } from './notes'
 import type { NoteState } from './page-detail'
+import { debugSitesEnabled } from './constants'
+import { renderRuralDebugPage } from './page-debug'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const STYLES_ROOT  = path.resolve(__dirname, '../styles')
@@ -219,6 +221,22 @@ function mountCityRoutes(lang: Lang, base: string): void {
     if (!city) { next(); return }
     await serveWikiPage(city, decodeURIComponent(req.params.slug), lang, res, noteBanner(req))
   })
+}
+
+// Development aid, mounted only with DEBUG_SITES=on — see FEATURES.debugSites.
+if (debugSitesEnabled()) {
+  app.get('/debug/rural', async (_req, res) => {
+    const rural = CITIES.filter(c => c.kind === 'rural')
+    const sites = await Promise.all(rural.map(async c => {
+      const pages = await loadWikiPages(c)
+      const points = pages
+        .filter(p => p.coords && p.area && p.type !== c.taxonomy.areaType && (c.areas ?? []).includes(p.area))
+        .map(p => ({ lat: p.coords![0], lon: p.coords![1], title: p.title, area: p.area! }))
+      return { slug: c.slug, name: c.name.ru, areas: c.areas ?? [], points }
+    }))
+    res.send(renderRuralDebugPage(sites))
+  })
+  console.log('[debug] /debug/rural is mounted')
 }
 
 // EN first: /en must not be read as a city slug by the Russian tree.

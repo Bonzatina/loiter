@@ -201,9 +201,9 @@ export const CITIES: City[] = [
     cardImage: 'stephansdom.jpg',
     about: viennaAbout,
   },
-  // ── The rural wiki, presented as eight landscapes ────────────────────────────
+  // ── The rural wiki, presented as nine landscapes ────────────────────────────
   //
-  // One repository, one history, one standalone app — eight sites here. It spans
+  // One repository, one history, one standalone app — nine sites here. It spans
   // 377 km east to west and 257 north to south, and a single map could not show it:
   // at the old starting view 413 of its 772 mapped objects were off screen, Balaton
   // (113) and Burgenland (80) among them. Splitting the presentation gives each
@@ -216,7 +216,7 @@ export const CITIES: City[] = [
   // by modern border would contradict the subproject's own premise, which is cultural
   // continuity across them.
   //
-  // `concepts/` and `people/` are cross-region and shared by all eight: a note on
+  // `concepts/` and `people/` are cross-region and shared by all nine: a note on
   // timber framing belongs to every landscape it appears in.
   //
   // Centres and zooms are computed from each cluster's own content, not guessed.
@@ -315,6 +315,28 @@ export const CITIES: City[] = [
     about: ruralAbout,
   },
   {
+    // Central Slovakia's mining towns and the valleys under the Fatra and the Tatras:
+    // Banská Štiavnica, Kremnica and Banská Bystrica on the Hron, then Turiec, Liptov,
+    // Orava and Kysuce. Split off the Spiš site on 2026-09-24, which then ran 250 km
+    // from Kysuce to Zemplín under a name that fitted only its eastern half.
+    slug: 'fatra',
+    dir: 'wiki_rural_travel',
+    kind: 'rural',
+    taxonomy: RURAL_TAXONOMY,
+    routes: RURAL_ROUTES,
+    areas: ['stiavnicke-vrchy', 'banskobystricky', 'turiec', 'liptov', 'orava', 'kysuce'],
+    brand: 'Loiter: Горные города и Фатра',
+    name: { ru: 'Горные города и Фатра', en: 'Mining Towns & the Fatra' },
+    center: [48.9151, 19.1792],
+    zoom: 9,
+    stateKey: 'fatra_map_state_v1',
+    timezone: 'Europe/Bratislava',
+    districtLabel: 'Регион',
+    domains: ['museums', 'nature', 'thermal', 'lookout', 'transport'],
+    cardImage: 'mestsky-hrad-banska-bystrica.jpg',
+    about: ruralAbout,
+  },
+  {
     // Named for the landscapes, not for a state. «Верхняя Венгрия» / Felvidék is
     // historically exact and unusable here: in present-day usage it carries an
     // irredentist edge that would read badly to a Slovak reader, and it also
@@ -322,23 +344,27 @@ export const CITIES: City[] = [
     // for territory that is now in another one. Since Novohrad moved to the Northern
     // Uplands the cluster happens to lie wholly in Slovakia; the name still follows the
     // family rule and names landscapes, not the state.
-    // «Рудогорье» is qualified as Slovak because the bare name would collide with the
-    // Erzgebirge, which this family also covers, next to Dresden.
+    // The old name, «Спиш и Словацкое Рудогорье», qualified Rudohorie as Slovak so it
+    // would not collide with the Erzgebirge next to Dresden; the current one avoids
+    // the word altogether.
     slug: 'spis-rudohorie',
     dir: 'wiki_rural_travel',
     kind: 'rural',
     taxonomy: RURAL_TAXONOMY,
     routes: RURAL_ROUTES,
-    areas: ['stiavnicke-vrchy', 'banskobystricky', 'gemer', 'spiš', 'šariš', 'zemplín', 'abaujtorna', 'liptov', 'orava', 'turiec', 'kysuce'],
-    brand: 'Loiter: Спиш и Словацкое Рудогорье',
-    name: { ru: 'Спиш и Словацкое Рудогорье', en: 'Spiš & the Slovak Ore Mountains' },
-    center: [48.8200, 20.3500],
+    // Since 2026-09-24 the eastern half only: the Slovak Ore Mountains with Gemer and
+    // Spiš, and Šariš, Košice and Zemplín beyond them. The slug stays for its URLs; the
+    // name no longer says Rudohorie alone, because Šariš and Zemplín are not in it.
+    areas: ['gemer', 'spiš', 'šariš', 'abaujtorna', 'zemplín'],
+    brand: 'Loiter: Спиш, Гемер и Земплин',
+    name: { ru: 'Спиш, Гемер и Земплин', en: 'Spiš, Gemer & Zemplín' },
+    center: [48.7842, 21.1251],
     zoom: 8,
-    stateKey: 'spis_rudohorie_map_state_v2',
+    stateKey: 'spis_rudohorie_map_state_v3',
     timezone: 'Europe/Bratislava',
     districtLabel: 'Регион',
     domains: ['museums', 'nature', 'thermal', 'lookout', 'transport'],
-    cardImage: 'mestsky-hrad-banska-bystrica.jpg',
+    cardImage: 'spissky-hrad.jpg',
     about: ruralAbout,
   },
   {
@@ -441,7 +467,7 @@ export const isCitySlug = (slug: string): boolean => BY_SLUG.has(slug.toLowerCas
  * Top-level URL segments the router owns. A city slug must never collide with
  * one, or `/{city}` would shadow a real route — checked at startup below.
  */
-export const RESERVED_SEGMENTS = ['en', 'about', 'assets', 'styles', 'scripts', 'note', 'cities']
+export const RESERVED_SEGMENTS = ['en', 'about', 'assets', 'styles', 'scripts', 'note', 'cities', 'debug']
 
 for (const city of CITIES) {
   if (RESERVED_SEGMENTS.includes(city.slug)) {

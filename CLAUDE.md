@@ -81,7 +81,7 @@ picker and the switcher group by it so the rural wiki is not offered as a sevent
 
 ### One subproject, several sites — `areas`
 
-The rural wiki is served as **eight sites**, not one. It spans well over 500 km east to
+The rural wiki is served as **nine sites**, not one. It spans well over 500 km east to
 west; at the single starting view it once had, 413 of its then 772 mapped objects were off
 screen, Balaton (113 objects) and Burgenland (80) among them. A registry entry may
 therefore name the area folders it covers, and the loader serves only those:
@@ -93,13 +93,14 @@ therefore name the area folders it covers, and the loader serves only those:
 | Нойзидлерзее и предгорья Альп | `neusiedl` | burgenland, römerland, ferto, moson, alpokalja |
 | Балатон и Задунавье | `balaton` | balaton, bakony, kisalföld, gerecse, velence, orseg, budai-hegyseg, gocsej |
 | Южное Задунавье | `del-dunantul` | mecsek, villanyi-hegyseg, zselic, ormansag, belso-somogy |
-| Спиш и Словацкое Рудогорье | `spis-rudohorie` | stiavnicke-vrchy, banskobystricky, gemer, spiš, šariš, zemplín, abaujtorna, liptov, orava, turiec, kysuce |
+| Горные города и Фатра | `fatra` | stiavnicke-vrchy, banskobystricky, turiec, liptov, orava, kysuce |
+| Спиш, Гемер и Земплин | `spis-rudohorie` | gemer, spiš, šariš, abaujtorna, zemplín |
 | Большая равнина | `alfold` | kiskunság, tiszavidék, hortobágy, del-duna, del-alfold, koros-maros, szatmar-bereg, hajdusag |
 | Северное среднегорье | `matra-bukk` | mátra, bükk, novohrad, gödöllői-dombság, tokaj-hegyalja, aggteleki-karszt |
 
 The repository is untouched by this: one `dir`, one submodule pointer, one standalone app.
 Only the presentation is split. `concepts/` and `people/` are cross-region and shared by
-all eight; the area overview pages in `regions/` follow their cluster. Route lines follow
+all nine; the area overview pages in `regions/` follow their cluster. Route lines follow
 whichever site serves their page — otherwise every site drew all ten, putting the Danube
 ferries on the Balaton map. **Wikilinks follow the site that serves their target**
 (`linkResolver` in `server.ts`): a concept shown on every site mentions places in every
@@ -134,6 +135,13 @@ so the folder has to be as honest as the cluster. A new area goes to the
 cluster whose landscape it belongs to, not to whichever map it happens to fit — and it has
 to be added there: an area folder listed in no `areas` is served by no site, and
 `npm run check` reports it.
+
+**The Slovak uplands are two sites.** Until 2026-09-24 one site ran from Kysuce to
+Zemplín, some 250 km, under the name «Спиш и Словацкое Рудогорье», which fitted only its
+eastern half: Orava, Kysuce, Turiec and Liptov are valleys under the Fatra and the Tatras,
+and the mining towns on the Hron are not the Ore Mountains either. The western half is now
+«Горные города и Фатра» (`fatra`); the eastern keeps the slug `spis-rudohorie` for its URLs
+and is called «Спиш, Гемер и Земплин», since Šariš and Zemplín are not Rudohorie.
 
 **One lake, one site.** Until 2026-09-24 Burgenland and the Römerland sat on the Slovak
 site with Bratislava, while the Hungarian shore of the same lake — Sopron, Fertőd, Nagycenk —
@@ -215,7 +223,7 @@ keep the existing `wroclav` spelling.
 
 `cities.ts` asserts its own invariants at import time — slug shape, no duplicates, and no
 collision with `RESERVED_SEGMENTS` (`en`, `about`, `assets`, `styles`, `scripts`, `note`,
-`cities`). A bad registry entry fails at startup, not on a request.
+`cities`, `debug`). A bad registry entry fails at startup, not on a request.
 
 ## URLs
 
@@ -259,7 +267,7 @@ remembered client-side so a return visit to `/` can offer it.
 
 **One city at a time — strictly.** The map, the list and the search always operate
 inside a single city's bounds, exactly as in the subprojects. There is no all-cities
-overview map and no cross-city search: the combined site is six city sites and eight rural
+overview map and no cross-city search: the combined site is six city sites and nine rural
 ones sharing one engine, not one site about all of them. Serving ~950 objects to the client at once, and
 deciding what an intermediate zoom level should show, are problems this deliberately
 does not take on. `/` is the only page that knows about more than one city.
@@ -452,6 +460,7 @@ tried on the live site and switched off from the host's dashboard without a comm
 | Flag | State | Override |
 |---|---|---|
 | `fameSlider` | **off** | `FAME_SLIDER=on` / `=off` |
+| `debugSites` | **off** | `DEBUG_SITES=on` — development only, never for the live site |
 
 **`fameSlider`** rates every place 1–5 by how mass-touristic it is and lets the reader
 filter down to the quiet end. Seeded for Dresden (78 of 78 rated) and Bratislava (156 of
@@ -464,6 +473,13 @@ about it, which is right for a fairytale tree and wrong for St Martin's Cathedra
 
 The `fame:` values stay in the pages' frontmatter with the flag off. They are inert:
 nothing reads them, no control is rendered, nothing is filtered.
+
+**`debugSites`** mounts `/debug/rural` (`src/page-debug.ts`): every rural site on one map,
+each as the convex hull of its objects with the objects as dots, area hulls dashed on
+demand, a toggle per site. It exists to judge the clusters against each other, which is
+exactly what the one-site-at-a-time rule forbids on reader-facing pages — so it is never
+switched on in production. Locally: `PORT=3000 DEBUG_SITES=on npm start`, then
+http://localhost:3000/debug/rural.
 
 ### Deploying
 
@@ -526,6 +542,11 @@ changes.
   `node tools/sync-family-rules.mjs`. Change a shared rule there, sync, and commit the copies
   inside each subproject; the family check fails while any copy differs. A subproject's own
   sections cover only what is genuinely its own — its geography, its domains table, its app.
+- **No email in outgoing requests.** Research and ingest — ours or a subagent's — never
+  sends an email address (personal or corporate) in a `User-Agent`, header or parameter;
+  where an API wants a contact, use `LoiterResearch/1.0 (+https://github.com/Bonzatina)`.
+  The full rule is in `tools/family-rules.md`; say it explicitly in every research
+  subagent's prompt.
 - **`tools/`** holds the family's maintenance scripts. They are committed with this root,
   run from it, take a subproject folder as argument and need nothing from `npm`:
   `shrink-images.mjs` (after every ingest — see above), `seed-fame.mjs` (fame ratings for

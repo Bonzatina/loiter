@@ -1148,3 +1148,11 @@ Pointer for `wiki_rural_travel` to move after its Őrség ingest: `orseg` grows 
 ## [2026-09-24] feat | Lake Neusiedl site: one lake, one site
 
 The rural wiki is now eight sites. New `neusiedl` — «Нойзидлерзее и предгорья Альп» / Lake Neusiedl & Alpine Foothills — serves `burgenland`, `römerland` and three areas carved out of `kisalföld` in the subproject: `ferto` (Sopron, Fertőd, Nagycenk), `moson` (Mosonmagyaróvár, Hegyeshalom, Rajka), `alpokalja` (Kőszeg, Szombathely, Ják). Before, the lake's Austrian shore was on the Slovak site and its Hungarian shore on the Balaton site, 100+ km from Balaton. `male-karpaty` loses Burgenland and the Römerland, becomes «Малые Карпаты», is re-centred and its state key bumped to v2. Not named «Бургенланд»: Sopron under that name is the claim the 1921 plebiscite settled. 122 mapped objects; `npm run check` clean.
+
+## [2026-09-24] feat | Slovak uplands split in two, both filled
+
+«Спиш и Словацкое Рудогорье» ran 250 km from Kysuce to Zemplín under a name that fitted only its eastern half. New site `fatra` — «Горные города и Фатра» / Mining Towns & the Fatra — takes stiavnicke-vrchy, banskobystricky, turiec, liptov, orava, kysuce; `spis-rudohorie` keeps its slug, becomes «Спиш, Гемер и Земплин» and keeps gemer, spiš, šariš, abaujtorna, zemplín (state key v3). The rural wiki is nine sites. Both were filled in the same sweep: 53 new objects in the subproject, `fatra` 57 → 87 mapped, `spis-rudohorie` 61 → 84; centres recomputed from the new content. 25 source domains added to `web/src/about/rural.ts`. `npm run check` clean.
+
+## [2026-09-24] feat | Debug map of the rural sites
+
+`/debug/rural` behind the new `debugSites` flag (`DEBUG_SITES=on`, off by default): all nine rural sites on one map as convex hulls of their objects, dots, optional dashed area hulls, per-site toggles. `debug` joins `RESERVED_SEGMENTS`. Found on the way: `people/Kisfaludy-Sandor` carries `region: bakony` and coords, so as a shared flat page it is drawn on every rural site's map.

@@ -95,6 +95,16 @@ Run `npm run check` in `Loiter/web`. It reports, among other things, a title wit
 original, a source named on a page, a site missing from the about lists, a place without
 `fame`, a domain outside the vocabulary and a wikilink that leads nowhere.
 
+### No email in outgoing requests
+
+Research requests — Wikipedia and MediaWiki APIs, Nominatim, Photon, Commons downloads, any
+site — never carry an email address: not the personal one, not the corporate one, not in a
+`User-Agent`, a header, a query string or a form field. A contact-bearing `User-Agent`, where
+an API asks for one, names the project and its repository URL instead:
+`LoiterResearch/1.0 (+https://github.com/Bonzatina)`. On 2026-09-24 research agents put the
+personal address into Wikipedia `User-Agent` headers without being asked; this rule exists
+so that does not happen again. The address in Git commits below is unaffected.
+
 ### Git
 
 Commits are `bonzatina <martymckul@gmail.com>`. The machine's global identity is a corporate
