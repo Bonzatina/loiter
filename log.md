@@ -1136,3 +1136,7 @@ Pointer for `wiki_rural_travel` to move after its Göcsej ingest: 9 settlements,
 ## [2026-09-24] content | Inner Somogy and Ormánság filled
 
 Pointer for `wiki_rural_travel` to move after its Drava ingest: 13 objects in `belso-somogy` and 6 in `ormansag`, both on the del-dunantul site, which goes from 44 to 63 mapped objects. Twenty-four new source domains in `web/src/about/rural.ts`. `npm run check` clean.
+
+## [2026-09-24] lint | Proofread of the day's rural pages; ledger updated
+
+The 54 `wiki_rural_travel` pages written today were read whole by five readers: ~122 defects, 26 factual. `.claude/skills/proofread/references/defects.md` gains a section for the sweep — superlatives contradicted by sister pages, claims gone stale, clause-for-object, chronology out of order, wrong-culture terms, calques, wrong Latin names, one Russian name for two objects — and records a defect the sweep itself introduced and caught: a `sed` pattern containing a wikilink's `\|`, which basic regex reads as alternation.
