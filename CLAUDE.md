@@ -81,7 +81,7 @@ picker and the switcher group by it so the rural wiki is not offered as a sevent
 
 ### One subproject, several sites — `areas`
 
-The rural wiki is served as **seven sites**, not one. It spans well over 500 km east to
+The rural wiki is served as **eight sites**, not one. It spans well over 500 km east to
 west; at the single starting view it once had, 413 of its then 772 mapped objects were off
 screen, Balaton (113 objects) and Burgenland (80) among them. A registry entry may
 therefore name the area folders it covers, and the loader serves only those:
@@ -89,7 +89,8 @@ therefore name the area folders it covers, and the loader serves only those:
 | Site | Slug | Areas |
 |---|---|---|
 | Излучина Дуная | `dunakanyar` | dunakanyar, pilis |
-| Малые Карпаты и Бургенланд | `male-karpaty` | podunajsko, záhorie, male-karpaty, považie, ponitrie, burgenland, römerland |
+| Малые Карпаты | `male-karpaty` | podunajsko, záhorie, male-karpaty, považie, ponitrie |
+| Нойзидлерзее и предгорья Альп | `neusiedl` | burgenland, römerland, ferto, moson, alpokalja |
 | Балатон и Задунавье | `balaton` | balaton, bakony, kisalföld, gerecse, velence, orseg, budai-hegyseg, gocsej |
 | Южное Задунавье | `del-dunantul` | mecsek, villanyi-hegyseg, zselic, ormansag, belso-somogy |
 | Спиш и Словацкое Рудогорье | `spis-rudohorie` | stiavnicke-vrchy, banskobystricky, gemer, spiš, šariš, zemplín, abaujtorna, liptov, orava, turiec, kysuce |
@@ -98,7 +99,7 @@ therefore name the area folders it covers, and the loader serves only those:
 
 The repository is untouched by this: one `dir`, one submodule pointer, one standalone app.
 Only the presentation is split. `concepts/` and `people/` are cross-region and shared by
-all seven; the area overview pages in `regions/` follow their cluster. Route lines follow
+all eight; the area overview pages in `regions/` follow their cluster. Route lines follow
 whichever site serves their page — otherwise every site drew all ten, putting the Danube
 ferries on the Balaton map. **Wikilinks follow the site that serves their target**
 (`linkResolver` in `server.ts`): a concept shown on every site mentions places in every
@@ -134,11 +135,24 @@ cluster whose landscape it belongs to, not to whichever map it happens to fit �
 to be added there: an area folder listed in no `areas` is served by no site, and
 `npm run check` reports it.
 
+**One lake, one site.** Until 2026-09-24 Burgenland and the Römerland sat on the Slovak
+site with Bratislava, while the Hungarian shore of the same lake — Sopron, Fertőd, Nagycenk —
+and the Moson Plain at the tripoint sat in `kisalföld` on the Balaton site, 100 km and more
+from Balaton. The Fertő/Neusiedlersee landscape is a single UNESCO site, and the 1921 border
+cut it in two; the clusters had followed that border. The lake country is now one site on
+both sides of it: `burgenland`, `römerland`, and three areas carved out of `kisalföld` —
+`ferto` (Sopron, Fertőd, Nagycenk), `moson` (Mosonmagyaróvár, Hegyeshalom, Rajka) and
+`alpokalja` (Kőszeg, Szombathely, Ják), whose hills run on into southern Burgenland.
+`kisalföld` keeps Pannonhalma, Komárom and Tata on the Balaton site; the Little Carpathians
+site is now wholly Slovak.
+
 The names avoid naming a state. «Верхняя Венгрия» was the first name for the Slovak
 uplands cluster and is not usable: in present-day use it carries an irredentist edge, and
 it misdirects a traveller by naming a country that has not existed for a century. With
 Novohrad moved out that cluster now lies wholly in Slovakia, and its name still names the
-landscapes, not the state.
+landscapes, not the state. The same rule runs the other way at the lake: the site is not
+called «Бургенланд», because putting Sopron under that name repeats the Austrian claim the
+1921 plebiscite settled.
 
 ## The City Registry — `web/src/cities.ts`
 
@@ -245,7 +259,7 @@ remembered client-side so a return visit to `/` can offer it.
 
 **One city at a time — strictly.** The map, the list and the search always operate
 inside a single city's bounds, exactly as in the subprojects. There is no all-cities
-overview map and no cross-city search: the combined site is six city sites and seven rural
+overview map and no cross-city search: the combined site is six city sites and eight rural
 ones sharing one engine, not one site about all of them. Serving ~950 objects to the client at once, and
 deciding what an intermediate zoom level should show, are problems this deliberately
 does not take on. `/` is the only page that knows about more than one city.

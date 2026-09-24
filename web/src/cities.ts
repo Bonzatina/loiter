@@ -201,20 +201,22 @@ export const CITIES: City[] = [
     cardImage: 'stephansdom.jpg',
     about: viennaAbout,
   },
-  // ── The rural wiki, presented as seven landscapes ────────────────────────────
+  // ── The rural wiki, presented as eight landscapes ────────────────────────────
   //
-  // One repository, one history, one standalone app — seven sites here. It spans
+  // One repository, one history, one standalone app — eight sites here. It spans
   // 377 km east to west and 257 north to south, and a single map could not show it:
   // at the old starting view 413 of its 772 mapped objects were off screen, Balaton
   // (113) and Burgenland (80) among them. Splitting the presentation gives each
   // landscape a map that actually frames it.
   //
-  // The clusters are landscapes, not countries. Burgenland belongs with Bratislava's
-  // hinterland — Eisenstadt is 40 km away and was Kismarton in the same county — and
-  // splitting by modern border would contradict the subproject's own premise, which
-  // is cultural continuity across them.
+  // The clusters are landscapes, not countries. Burgenland was first put with
+  // Bratislava's hinterland, while the Hungarian shore of its own lake sat on the
+  // Balaton site: one lake, one UNESCO landscape, cut in two by the 1921 border. Since
+  // 2026-09-24 the lake country is one site on both sides of that border — splitting
+  // by modern border would contradict the subproject's own premise, which is cultural
+  // continuity across them.
   //
-  // `concepts/` and `people/` are cross-region and shared by all seven: a note on
+  // `concepts/` and `people/` are cross-region and shared by all eight: a note on
   // timber framing belongs to every landscape it appears in.
   //
   // Centres and zooms are computed from each cluster's own content, not guessed.
@@ -251,16 +253,43 @@ export const CITIES: City[] = [
     kind: 'rural',
     taxonomy: RURAL_TAXONOMY,
     routes: RURAL_ROUTES,
-    areas: ['podunajsko', 'záhorie', 'male-karpaty', 'považie', 'ponitrie', 'burgenland', 'römerland'],
-    brand: 'Loiter: Малые Карпаты и Бургенланд',
-    name: { ru: 'Малые Карпаты и Бургенланд', en: 'Little Carpathians & Burgenland' },
-    center: [47.9613, 17.5159],
+    // Western Slovakia around Bratislava: the Little Carpathians, Záhorie, the Danube
+    // lowland of Podunajsko and the Váh and Nitra valleys. Burgenland and the Römerland
+    // left for the lake site below on 2026-09-24.
+    areas: ['podunajsko', 'záhorie', 'male-karpaty', 'považie', 'ponitrie'],
+    brand: 'Loiter: Малые Карпаты',
+    name: { ru: 'Малые Карпаты', en: 'Little Carpathians' },
+    center: [48.4479, 17.7928],
     zoom: 8,
-    stateKey: 'male_karpaty_map_state_v1',
+    stateKey: 'male_karpaty_map_state_v2',
     timezone: 'Europe/Bratislava',
     districtLabel: 'Регион',
     domains: ['museums', 'nature', 'thermal', 'lookout', 'transport'],
     cardImage: 'cerveny-kamen-castle.jpg',
+    about: ruralAbout,
+  },
+  {
+    // Lake Neusiedl / Fertő and the country around it, on both sides of the 1921
+    // border: Burgenland, the Römerland at Carnuntum, the Hungarian shore with Sopron
+    // and Fertőd, the Moson Plain at the tripoint, and Alpokalja — Kőszeg and
+    // Szombathely — whose hills run on into southern Burgenland. Named for the lake and
+    // the foothills, not «Бургенланд»: calling Sopron Burgenland is the very claim the
+    // 1921 plebiscite settled.
+    slug: 'neusiedl',
+    dir: 'wiki_rural_travel',
+    kind: 'rural',
+    taxonomy: RURAL_TAXONOMY,
+    routes: RURAL_ROUTES,
+    areas: ['burgenland', 'römerland', 'ferto', 'moson', 'alpokalja'],
+    brand: 'Loiter: Нойзидлерзее и предгорья Альп',
+    name: { ru: 'Нойзидлерзее и предгорья Альп', en: 'Lake Neusiedl & Alpine Foothills' },
+    center: [47.5902, 16.7817],
+    zoom: 9,
+    stateKey: 'neusiedl_map_state_v1',
+    timezone: 'Europe/Vienna',
+    districtLabel: 'Регион',
+    domains: ['museums', 'nature', 'thermal', 'lookout', 'transport'],
+    cardImage: 'leuchtturm-podersdorf-am-see.jpg',
     about: ruralAbout,
   },
   {
@@ -271,6 +300,8 @@ export const CITIES: City[] = [
     routes: RURAL_ROUTES,
     // Tata (Gerecse), Lake Velence and the Buda Hills with the Zsámbék Basin are
     // Transdanubia too, and belong here; so is Göcsej, the Zala hills east of the Őrség.
+    // Sopron, Fertőd, Mosonmagyaróvár, Kőszeg and Szombathely were here as part of
+    // `kisalföld` until 2026-09-24 and now belong to the lake site above.
     areas: ['balaton', 'bakony', 'kisalföld', 'gerecse', 'velence', 'orseg', 'budai-hegyseg', 'gocsej'],
     brand: 'Loiter: Балатон и Задунавье',
     name: { ru: 'Балатон и Задунавье', en: 'Balaton & Transdanubia' },

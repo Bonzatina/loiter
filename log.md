@@ -1144,3 +1144,7 @@ The 54 `wiki_rural_travel` pages written today were read whole by five readers: 
 ## [2026-09-24] content | Őrség filled
 
 Pointer for `wiki_rural_travel` to move after its Őrség ingest: `orseg` grows from 7 to 28 pages (balaton site), with a concept on the Őrség wooden bell towers. Fourteen new source domains in `web/src/about/rural.ts`; the kornyeke.hu description no longer says "around Budapest". `npm run check` clean.
+
+## [2026-09-24] feat | Lake Neusiedl site: one lake, one site
+
+The rural wiki is now eight sites. New `neusiedl` — «Нойзидлерзее и предгорья Альп» / Lake Neusiedl & Alpine Foothills — serves `burgenland`, `römerland` and three areas carved out of `kisalföld` in the subproject: `ferto` (Sopron, Fertőd, Nagycenk), `moson` (Mosonmagyaróvár, Hegyeshalom, Rajka), `alpokalja` (Kőszeg, Szombathely, Ják). Before, the lake's Austrian shore was on the Slovak site and its Hungarian shore on the Balaton site, 100+ km from Balaton. `male-karpaty` loses Burgenland and the Römerland, becomes «Малые Карпаты», is re-centred and its state key bumped to v2. Not named «Бургенланд»: Sopron under that name is the claim the 1921 plebiscite settled. 122 mapped objects; `npm run check` clean.
