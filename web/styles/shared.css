@@ -90,7 +90,11 @@ header span { font-size: 0.85rem; opacity: 0.75; }
 
 .city-switcher ul {
   position: absolute;
-  z-index: 1000;          /* above the Leaflet map, which sits at 400 */
+  /* Above the whole Leaflet map: its panes sit at 400 and its control corners
+     (.leaflet-top / .leaflet-bottom — zoom, legend, the navigation help) at 1000.
+     At an equal 1000 the map, coming later in the page, won, and the list — long
+     since the rural sites joined — ran under the help box in the bottom-left. */
+  z-index: 1100;
   top: calc(100% + 6px);
   left: 0;
   min-width: 180px;
