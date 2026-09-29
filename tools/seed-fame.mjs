@@ -191,7 +191,7 @@ SELECT ?item ?label (GROUP_CONCAT(DISTINCT ?name; separator="|") AS ?names) ?lat
   const res = await fetch('https://query.wikidata.org/sparql?format=json', {
     method: 'POST',
     headers: {
-      'User-Agent': 'LoiterWiki/1.0 (https://github.com/Bonzatina/loiter; martymckul@gmail.com)',
+      'User-Agent': 'LoiterResearch/1.0 (+https://github.com/Bonzatina)',
       'Accept': 'application/sparql-results+json',
       'Content-Type': 'application/sparql-query',
     },
