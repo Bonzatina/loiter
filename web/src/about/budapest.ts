@@ -49,6 +49,7 @@ export const budapestAbout: AboutData = {
     { domain: 'nori.gov.hu',                  ru: 'Институт национального наследия',                            en: 'National Heritage Institute' },
     { domain: 'mazsihisz.hu',                 ru: 'Союз венгерских еврейских общин',                            en: 'Federation of Hungarian Jewish Communities' },
     { domain: 'dreherzrt.hu',                 ru: 'Пивоваренные заводы Дреера',                                 en: 'Dreher Breweries' },
+    { domain: 'whb.hu',                       ru: 'Строительная компания',                                      en: 'Construction company' },
     { domain: 'csili.hu',                     ru: 'Дом культуры «Чили»',                                        en: 'Csili Cultural Centre' },
     { domain: 'sorbotkert.hu',                ru: 'Шорокшарский ботанический сад',                              en: 'Soroksár Botanical Garden' },
     { domain: 'budapestcity.org',             ru: 'База памятников Будапешта',                                  en: 'Budapest monuments database' },
