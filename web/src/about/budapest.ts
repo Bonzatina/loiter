@@ -80,6 +80,7 @@ export const budapestAbout: AboutData = {
     { domain: 'csepelivaroskep.hu',           ru: 'Учреждения культуры Чепеля',                                 en: 'Csepel district cultural institutions' },
     { domain: 'programturizmus.hu',           ru: 'Венгерский путеводитель по программам и музеям',             en: 'Hungarian programme and museum guide' },
     { domain: 'bp16.hu',                      ru: 'Самоуправление XVI района',                                  en: 'District XVI local government' },
+    { domain: 'hatvanizoltan.hu',             ru: 'Местный бюллетень Ракошкерта',                               en: 'Rákoskert local newsletter' },
     { domain: 'mnm.hu',                       ru: 'Венгерский национальный музей',                              en: 'Hungarian National Museum' },
     { domain: 'szepmuveszeti.hu',             ru: 'Музей изящных искусств',                                     en: 'Museum of Fine Arts' },
     { domain: 'mucsarnok.hu',                 ru: 'Выставочный зал Мючарнок',                                   en: 'Kunsthalle Budapest' },
