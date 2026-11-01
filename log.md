@@ -1156,3 +1156,7 @@ The rural wiki is now eight sites. New `neusiedl` — «Нойзидлерзее
 ## [2026-09-24] feat | Debug map of the rural sites
 
 `/debug/rural` behind the new `debugSites` flag (`DEBUG_SITES=on`, off by default): all nine rural sites on one map as convex hulls of their objects, dots, optional dashed area hulls, per-site toggles. `debug` joins `RESERVED_SEGMENTS`. Found on the way: `people/Kisfaludy-Sandor` carries `region: bakony` and coords, so as a shared flat page it is drawn on every rural site's map.
+
+## [2026-09-24] feat | Gaps between rural sites filled
+
+Two empty patches on the combined map are closed. New areas in the subproject, added to the registry: `kemenesalja` → balaton, `horehronie` → fatra, `vysoke-tatry` → spis-rudohorie; `moson`, `kisalföld` and `gemer` also grew. 53 new objects: neusiedl 122 → 128, balaton 312 → 333, fatra 87 → 94, spis-rudohorie 84 → 103. The site hulls now meet (neusiedl reaches 17.50° E, balaton starts at 16.28°; fatra reaches 20.20°, spis starts at 19.85°). Centres recomputed, state keys of the four sites bumped. 79 domains added to `web/src/about/rural.ts`. `npm run check` clean.

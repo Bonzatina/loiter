@@ -91,10 +91,10 @@ therefore name the area folders it covers, and the loader serves only those:
 | Излучина Дуная | `dunakanyar` | dunakanyar, pilis |
 | Малые Карпаты | `male-karpaty` | podunajsko, záhorie, male-karpaty, považie, ponitrie |
 | Нойзидлерзее и предгорья Альп | `neusiedl` | burgenland, römerland, ferto, moson, alpokalja |
-| Балатон и Задунавье | `balaton` | balaton, bakony, kisalföld, gerecse, velence, orseg, budai-hegyseg, gocsej |
+| Балатон и Задунавье | `balaton` | balaton, bakony, kisalföld, gerecse, velence, orseg, budai-hegyseg, gocsej, kemenesalja |
 | Южное Задунавье | `del-dunantul` | mecsek, villanyi-hegyseg, zselic, ormansag, belso-somogy |
-| Горные города и Фатра | `fatra` | stiavnicke-vrchy, banskobystricky, turiec, liptov, orava, kysuce |
-| Спиш, Гемер и Земплин | `spis-rudohorie` | gemer, spiš, šariš, abaujtorna, zemplín |
+| Горные города и Фатра | `fatra` | stiavnicke-vrchy, banskobystricky, turiec, liptov, orava, kysuce, horehronie |
+| Спиш, Гемер и Земплин | `spis-rudohorie` | gemer, spiš, šariš, abaujtorna, zemplín, vysoke-tatry |
 | Большая равнина | `alfold` | kiskunság, tiszavidék, hortobágy, del-duna, del-alfold, koros-maros, szatmar-bereg, hajdusag |
 | Северное среднегорье | `matra-bukk` | mátra, bükk, novohrad, gödöllői-dombság, tokaj-hegyalja, aggteleki-karszt |
 

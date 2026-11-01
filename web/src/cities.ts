@@ -283,9 +283,9 @@ export const CITIES: City[] = [
     areas: ['burgenland', 'römerland', 'ferto', 'moson', 'alpokalja'],
     brand: 'Loiter: Нойзидлерзее и предгорья Альп',
     name: { ru: 'Нойзидлерзее и предгорья Альп', en: 'Lake Neusiedl & Alpine Foothills' },
-    center: [47.5902, 16.7817],
+    center: [47.5902, 16.8900],
     zoom: 9,
-    stateKey: 'neusiedl_map_state_v1',
+    stateKey: 'neusiedl_map_state_v2',
     timezone: 'Europe/Vienna',
     districtLabel: 'Регион',
     domains: ['museums', 'nature', 'thermal', 'lookout', 'transport'],
@@ -302,12 +302,15 @@ export const CITIES: City[] = [
     // Transdanubia too, and belong here; so is Göcsej, the Zala hills east of the Őrség.
     // Sopron, Fertőd, Mosonmagyaróvár, Kőszeg and Szombathely were here as part of
     // `kisalföld` until 2026-09-24 and now belong to the lake site above.
-    areas: ['balaton', 'bakony', 'kisalföld', 'gerecse', 'velence', 'orseg', 'budai-hegyseg', 'gocsej'],
+    // Kemenesalja — the Ság and the Kemenes volcanic plateau with the middle Rába
+    // valley (Sárvár, Celldömölk, Vasvár) — joined on 2026-09-24 to fill the empty
+    // patch between this site and the lake site; the Ság is kin to the Somló.
+    areas: ['balaton', 'bakony', 'kisalföld', 'gerecse', 'velence', 'orseg', 'budai-hegyseg', 'gocsej', 'kemenesalja'],
     brand: 'Loiter: Балатон и Задунавье',
     name: { ru: 'Балатон и Задунавье', en: 'Balaton & Transdanubia' },
-    center: [47.1535, 17.4500],
+    center: [47.1632, 17.6154],
     zoom: 8,
-    stateKey: 'balaton_map_state_v2',
+    stateKey: 'balaton_map_state_v3',
     timezone: 'Europe/Budapest',
     districtLabel: 'Регион',
     domains: ['museums', 'nature', 'thermal', 'lookout', 'transport'],
@@ -324,12 +327,12 @@ export const CITIES: City[] = [
     kind: 'rural',
     taxonomy: RURAL_TAXONOMY,
     routes: RURAL_ROUTES,
-    areas: ['stiavnicke-vrchy', 'banskobystricky', 'turiec', 'liptov', 'orava', 'kysuce'],
+    areas: ['stiavnicke-vrchy', 'banskobystricky', 'turiec', 'liptov', 'orava', 'kysuce', 'horehronie'],
     brand: 'Loiter: Горные города и Фатра',
     name: { ru: 'Горные города и Фатра', en: 'Mining Towns & the Fatra' },
-    center: [48.9151, 19.1792],
+    center: [48.9151, 19.3809],
     zoom: 9,
-    stateKey: 'fatra_map_state_v1',
+    stateKey: 'fatra_map_state_v2',
     timezone: 'Europe/Bratislava',
     districtLabel: 'Регион',
     domains: ['museums', 'nature', 'thermal', 'lookout', 'transport'],
@@ -355,12 +358,12 @@ export const CITIES: City[] = [
     // Since 2026-09-24 the eastern half only: the Slovak Ore Mountains with Gemer and
     // Spiš, and Šariš, Košice and Zemplín beyond them. The slug stays for its URLs; the
     // name no longer says Rudohorie alone, because Šariš and Zemplín are not in it.
-    areas: ['gemer', 'spiš', 'šariš', 'abaujtorna', 'zemplín'],
+    areas: ['gemer', 'spiš', 'šariš', 'abaujtorna', 'zemplín', 'vysoke-tatry'],
     brand: 'Loiter: Спиш, Гемер и Земплин',
     name: { ru: 'Спиш, Гемер и Земплин', en: 'Spiš, Gemer & Zemplín' },
-    center: [48.7842, 21.1251],
+    center: [48.7842, 21.0738],
     zoom: 8,
-    stateKey: 'spis_rudohorie_map_state_v3',
+    stateKey: 'spis_rudohorie_map_state_v4',
     timezone: 'Europe/Bratislava',
     districtLabel: 'Регион',
     domains: ['museums', 'nature', 'thermal', 'lookout', 'transport'],
