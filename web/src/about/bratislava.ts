@@ -73,6 +73,8 @@ export const bratislavaAbout: AboutData = {
     { domain: 'archinfo.sk',                    ru: 'База данных и журнал словацкой архитектуры',                           en: 'Slovak architecture database and magazine' },
     { domain: 'zsceska.sk',                     ru: 'Сайт школы на Ческой улице',                                           en: 'Website of the school on Česká street' },
     { domain: 'divadelneprechadzky.theatre.sk', ru: 'Театральные прогулки Театрального института',                          en: 'Theatre walks project of the Theatre Institute' },
+    { domain: 'mur3.webnode.sk',                ru: 'Сайт документального фильма «Múr»',                                    en: 'Website of the documentary «Múr»' },
+    { domain: 'fluidumfilm.sk',                 ru: 'Документальная студия Fluidum Film',                                   en: 'Fluidum Film documentary studio' },
     { domain: 'vajnory.sk',                     ru: 'Официальный сайт городской части Вайноры',                             en: 'Official website of the Vajnory borough' },
   ],
 }
